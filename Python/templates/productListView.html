@@ -1,0 +1,98 @@
+{% extends "layout.html" %}
+{% block content %}
+<section class="section-pagetop bg">
+    <div class="container">
+        <h1 class="title-page">{{category}} Products</h2>
+        <nav>
+            <ol class="breadcrumb text-white">
+                <li class="breadcrumb-item"><a href="{{url_for('home')}}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{url_for('productListView')}}">Products</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{category}}</li>
+            </ol>
+        </nav>
+    </div> <!-- container //  -->
+</section>
+<!-- ========================= SECTION INTRO END// ========================= -->
+
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="section-content padding-y">
+    <div class="container">
+        <div class="row">
+            {% for product in products %}
+            <div class="col-12">
+                <article class="card card-product-list">
+                    <div class="row no-gutters">
+                        <aside class="col-md-3">
+                            <div class="img-wrap img-zoom">
+                                <img src="static/images/items/2.jpg">
+                                <a class='card-img-overlay' data-target="#productModal{{product.Product_ID}}"
+                                    data-toggle="modal"></a>
+                            </div>
+                            <!-- <a data-toggle="modal"  class="img-wrap"><img src="static/images/items/5.jpg"></a> -->
+                        </aside> <!-- col.// -->
+                        <div class="col-md-6">
+                            <div class="info-main">
+                                <h5 class="h5 title">{{product.Name}}</h5>
+                                <div class="rating-wrap mb-3">
+                                    <ul class="rating-stars">
+                                        <li style="width:80%" class="stars-active">
+                                            {% for x in range(product.product_rating|int) %}
+                                            <i class="fa fa-star"></i>
+                                            {% endfor %}
+                                        </li>
+                                        <li>
+                                            {% for x in range(5) %}
+                                            <i class="fa fa-star"></i>
+                                            {% endfor %}
+                                        </li>
+                                    </ul>
+                                    <div class="label-rating">{{product.product_rating}}/5</div>
+                                </div> <!-- rating-wrap.// -->
+                                <p> {{product.Description}} </p>
+                            </div> <!-- info-main.// -->
+                        </div> <!-- col.// -->
+                        <aside class="col-md-3">
+                            <div class="info-aside">
+                                <div class="price-wrap">
+                                    <span class="price h5"> ${{product.Price}} </span>
+                                </div> <!-- info-price-detail // -->
+                                <p class="text-success">Free shipping</p>
+                                <br>
+                                <p>
+                                    <a href="{{url_for('productDetailView')}}?id={{product.Product_ID}}"
+                                        class="btn btn-primary btn-block"> Details </a>
+                                    <a href="{{url_for('wishlist')}}?action=post&pid={{product.Product_ID}}" class="btn btn-light btn-block">
+                                        <i class="fa fa-heart"></i>
+                                        <span class="text">Add to wishlist</span>
+                                    </a>
+                                </p>
+                            </div> <!-- info-aside.// -->
+                        </aside> <!-- col.// -->
+                    </div> <!-- row.// -->
+                </article> <!-- card-product .// -->
+            </div> <!-- col.// -->
+            <div class="modal fade" id="productModal{{product.Product_ID}}" tabindex="-1" role="dialog"
+                aria-labelledby="productModal" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLongTitle">{{product.Name}}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <a href="#" class="img-wrap"><img src="static/images/items/5.jpg"></a>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div> <!-- container .//  -->
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+{% endblock content%}

@@ -1,0 +1,68 @@
+{% extends "layout.html" %}
+{% block content %}
+<section class="section-pagetop bg">
+    <div class="container">
+        {% if product is not none%}
+        <h1 title="title-page">Edit Your Product</h1>
+        {% else %}
+        <h1 title="title-page">Add Your Product</h1>
+        {%endif%}
+    </div> <!-- container //  -->
+</section>
+
+<section class="section-content padding-y">
+    <div class="container">
+        <div class="row">
+            <form method="POST" class="w-100">
+                <div class="form-row form-group">
+                    <label class="col-md-2 col-form-label">Name:</label>
+                    <div class="col-sm-10">
+                        <input name="name" class="form-control" type="text" required value="{% if product is not none
+                            %}{{product.Name}}{%endif%}"">
+                    </div>
+                </div>
+                <div class="form-row form-group">
+                    <label class="col-md-2 col-form-label">Category:</label>
+                    <div class="col-sm-10">
+                        <input name="category" class="form-control" type="text" required value="{% if product is not none
+                            %}{{product.Category}}{%endif%}">
+                    </div>
+                </div>
+                <div class="form-row form-group">
+                    <label class="col-md-2 col-form-label">Description:</label>
+                    <div class="col-sm-10">
+                        <input name="description" class="form-control" type="text" value="{% if product is not none
+                            %}{{product.Description}}{%endif%}">
+                    </div>
+                </div>
+                <div class="form-row form-group">
+                    <label class="col-md-2 col-form-label">Quantity&nbsp;Left:</label>
+                    <div class="col-sm-10">
+                        <input name="quantity" class="form-control" type="number" required value="{% if product is not
+                            none %}{{product.Units_In_Stock}}{%endif%}">
+                    </div>
+                </div>
+                <div class="form-row form-group">
+                    <label class="col-md-2 col-form-label">Price:</label>
+                    <div class="col-sm-10">
+                        <input name="price" class="form-control" type="number" required {% if product is not none
+                            %}value={{product.Price}} readonly {%endif%}>
+                    </div>
+                </div>
+                {% if product is not none%}
+                <div class="form-row form-group">
+                    <label class="col-md-2 col-form-label">Rating:</label>
+                    <div class="col-sm-10">
+                        <input name="rating" class="form-control" type="number" value={{product.product_rating}}
+                            disabled>
+                    </div>
+                </div>
+                {% endif %}
+                <div class="form-group">
+                    <button type="submit" class="col-sm-10 offset-md-2 btn btn-primary btn-block"> Save </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock content %}

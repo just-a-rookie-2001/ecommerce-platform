@@ -1,0 +1,167 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<section class="section-content padding-y bg">
+    <div class="container">
+        <div class="card">
+            <div class="row no-gutters">
+                <aside class="col-md-6">
+                    <article class="gallery-wrap">
+                        <div class="img-big-wrap">
+                            <div> <a href="#"><img src="static/images/items/3.jpg"></a></div>
+                        </div>
+                        <div class="thumbs-wrap">
+                            <a href="#" class="item-thumb"> <img src="static/images/items/1.jpg"></a>
+                            <a href="#" class="item-thumb"> <img src="static/images/items/2.jpg"></a>
+                            <a href="#" class="item-thumb"> <img src="static/images/items/3.jpg"></a>
+                            <a href="#" class="item-thumb"> <img src="static/images/items/4.jpg"></a>
+                        </div>
+                    </article>
+                </aside>
+                <main class="col-md-6 border-left">
+                    <article class="content-body">
+                        <h2 class="title">{{product.Name}}</h2>
+                        <div class="rating-wrap my-3">
+                            <ul class="rating-stars">
+                                <li style="width:80%" class="stars-active">
+                                    {% for x in range(product.product_rating|int) %}
+                                    <i class="fa fa-star"></i>
+                                    {% endfor %}
+                                </li>
+                                <li>
+                                    {% for x in range(5) %}
+                                    <i class="fa fa-star"></i>
+                                    {% endfor %}
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="mb-3">
+                            <var class="price h4">${{product.Price}}</var>
+                        </div>
+                        <p>{{product.Description}}</p>
+                        <dl class="row">
+                            <dt class="col-sm-4">Delivery</dt>
+                            <dd class="col-sm-8">Worldwide</dd>
+                        </dl>
+                        <hr>
+                        <form method="POST" action="{{url_for('cart')}}">
+                            <div class="form-row">
+                                <div class="form-group col-md flex-grow-0">
+                                    <label>Quantity</label>
+                                    <div class="input-group mb-3 input-spinner remove-arrows">
+                                        <div class="input-group-prepend">
+                                            <button class="btn btn-light" type="button" id="button-plus"> + </button>
+                                        </div>
+                                        <input type="number" class="form-control" value="1" readonly id="quantity"
+                                            name="quantity">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-light" type="button" id="button-minus"> &minus;
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% if is_loggedin %}
+                            <div class="form-row form-group mb-3">
+                                <div class="col">
+                                    <a href="{{url_for('wishlist')}}?action=post&pid={{product.Product_ID}}"
+                                        class="btn btn-outline-danger w-100">
+                                        <span class="text">Save to Wishlist</span>
+                                        <i class="fa fa-heart"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            {%endif%}
+                            <div class="form-group form-row">
+                                <input type="text" class="d-none" name="id" value={{product.Product_ID}}>
+                                <div class="col-sm-6">
+                                    <button type="submit" class="btn btn-primary w-100" name="buy"> Buy Now
+                                    </button>
+                                </div>
+                                <div class="col-sm-6">
+                                    <button type="submit" class="w-100 mt-3 mt-sm-0 btn btn-outline-primary"
+                                        name="addtocart">
+                                        <span class="text">Add to cart</span>
+                                        <i class="fas fa-shopping-cart"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </article>
+                </main>
+            </div>
+        </div>
+        <div class="card mt-2 p-5">
+            <div class="row border-bottom pb-3 mb-4">
+                <h4 class="title mr-auto">Reviews</h4>
+                {% if is_loggedin and not is_employee%}
+                <button class="btn btn-outline-primary col-sm-4 mt-3 mt-sm-0" data-toggle="modal"
+                    data-target="#reviewModal">
+                    <i class="fas fa-plus mr-2"></i>
+                    Write a review
+                </button>
+                <div class="modal fade" id="reviewModal" tabindex="-1" role="dialog" aria-labelledby="reviewModalTitle"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="reviewModalTitle">Write a Review</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="{{url_for('productDetailView')}}" method="POST" id="reviewForm">
+                                    <div class="form-row form-group d-none">
+                                        <input name="id" type="number" readonly value="{{product.Product_ID}}">
+                                    </div>
+                                    <div class="form-row form-group">
+                                        <label class="col-3">Rating: </label>
+                                        <input name="rating" type="number" class="form-control col-9" min="0" max="5"
+                                            required>
+                                    </div>
+                                    <div class="form-row form-group">
+                                        <label class="col-3">Comments: </label>
+                                        <textarea name='comment' class="form-control col-9" required></textarea>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary" form="reviewForm">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            {% for review in reviews%}
+            <div class="row">
+                <div class="icontext align-items-start mr-4">
+                    <span class="icon icon-md rounded-circle border border-primary">
+                        <i class="fa fa-user text-primary"></i>
+                    </span>
+                    <div class="text">
+                        <ul class="rating-stars mb-2">
+                            <li style="width:80%" class="stars-active">
+                                {% for x in range(review.Rating|int) %}
+                                <i class="fa fa-star"></i>
+                                {% endfor %}
+                            </li>
+                            <li>
+                                {% for x in range(5) %}
+                                <i class="fa fa-star"></i>
+                                {% endfor %}
+                            </li>
+                        </ul>
+                        <!-- <h6 class="title">{{review.rating}} / 5</h6> -->
+                        <p class="text-muted">{{review.Comment}}</p>
+                    </div>
+                </div>
+            </div>
+            {%endfor%}
+        </div>
+    </div>
+</section>
+
+{% endblock content%}

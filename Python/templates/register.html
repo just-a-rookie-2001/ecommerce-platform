@@ -1,0 +1,144 @@
+{% extends "layout.html" %}
+{% block content %}
+<section class="section-content padding-y">
+    <!-- ============================ COMPONENT REGISTER   ================================= -->
+    <div class="card mx-auto" style="max-width:520px; margin-top:40px;">
+        <article class="card-body">
+            <header class="mb-4">
+                <h4 class="card-title">Sign up</h4>
+            </header>
+
+            <ul class="nav nav-pills nav-justified mb-4" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="buyer-tab" data-toggle="pill" href="#buyer" role="tab"
+                        aria-controls="buyer" aria-selected="true">Buyer</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="supplier-tab" data-toggle="pill" href="#supplier" role="tab"
+                        aria-controls="supplier" aria-selected="false">Supplier</a>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="buyer" role="tabpanel" aria-labelledby="buyer-tab">
+                    <form method="POST">
+                        <div class="form-group d-none">
+                            <input name='type' type="text" class="form-control" value="Buyer">
+                        </div>
+                        <div class="form-row">
+                            <div class="col-lg-6 form-group">
+                                <label>First name</label>
+                                <input name='firstName' type="text" class="form-control" placeholder="" required>
+                            </div> <!-- form-group end.// -->
+                            <div class="col-lg-6 form-group">
+                                <label>Last name</label>
+                                <input name='lastName' type="text" class="form-control" placeholder="">
+                            </div> <!-- form-group end.// -->
+                        </div> <!-- form-row end.// -->
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input name='email' type="email" class="form-control" placeholder="" required>
+                            <small class="form-text text-muted">We'll never share your email with anyone else.</small>
+                        </div> <!-- form-group end.// -->
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <input name='phone' type="tel" class="form-control" placeholder="">
+                        </div> <!-- form-row.// -->
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label>Create password</label>
+                                <input name='password' class="form-control" type="password" required>
+                            </div> <!-- form-group end.// -->
+                            <div class="form-group col-md-6">
+                                <label>Repeat password</label>
+                                <input name='confirm_password' class="form-control" type="password" required>
+                            </div> <!-- form-group end.// -->
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary btn-block"> Register </button>
+                        </div> <!-- form-group// -->
+                        <div class="form-group">
+                            <label class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" required>
+                                <div class="custom-control-label"> I agree with terms and contitions</div>
+                            </label>
+                        </div> <!-- form-group end.// -->
+                    </form>
+                </div>
+                <div class="tab-pane fade" id="supplier" role="tabpanel" aria-labelledby="supplier-tab">
+                    <form method="POST">
+                        <div class="form-group d-none">
+                            <input name='type' type="text" class="form-control" value="Supplier">
+                        </div>
+                        <div class="form-group">
+                            <label>Name</label>
+                            <input name='Name' type="text" class="form-control" placeholder="" required>
+                        </div> <!-- form-row end.// -->
+                        <div class="form-group">
+                            <label>Address Line 1</label>
+                            <input name='Address_Line1' type="text" class="form-control" placeholder="" required>
+                        </div> <!-- form-row end.// -->
+                        <div class="form-group">
+                            <label>Address Line 2</label>
+                            <input name='Address_Line2' type="text" class="form-control" placeholder="" required>
+                        </div> <!-- form-row end.// -->
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label>City</label>
+                                <input name='City' type="text" class="form-control">
+                            </div> <!-- form-group end.// -->
+                            <div class="form-group col-md-6">
+                                <label>State</label>
+                                <input name='State' type="text" class="form-control">
+                            </div> <!-- form-group end.// -->
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label>Zip Code</label>
+                                <input name='Zip' type="number" class="form-control">
+                            </div> <!-- form-group end.// -->
+                            <div class="form-group col-md-6">
+                                <label>Country</label>
+                                <input name='Country' type="text" class="form-control">
+                            </div> <!-- form-group end.// -->
+                        </div> <!-- form-row.// -->
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input name='email' type="email" class="form-control" placeholder="" required>
+                            <small class="form-text text-muted">We'll never share your email with anyone else.</small>
+                        </div> <!-- form-group end.// -->
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <input name='phone' type="number" class="form-control" placeholder="">
+                        </div> <!-- form-row.// -->
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label>Create password</label>
+                                <input name='password' class="form-control" type="password" required>
+                            </div> <!-- form-group end.// -->
+                            <div class="form-group col-md-6">
+                                <label>Repeat password</label>
+                                <input name='confirm_password' class="form-control" type="password" required>
+                            </div> <!-- form-group end.// -->
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary btn-block"> Register </button>
+                        </div> <!-- form-group// -->
+                        <div class="form-group">
+                            <label class="custom-control custom-checkbox"> <input type="checkbox"
+                                    class="custom-control-input" required>
+                                <div class="custom-control-label"> I agree with <a href="#">terms and contitions</a>
+                                </div>
+                            </label>
+                        </div> <!-- form-group end.// -->
+                    </form>
+                </div>
+
+        </article><!-- card-body.// -->
+    </div> <!-- card .// -->
+    <p class="text-center mt-4">Have an account? <a href="{{url_for('login')}}">Log In</a></p>
+    <br><br>
+    <!-- ============================ COMPONENT REGISTER  END.// ================================= -->
+</section>
+
+{% endblock content%}

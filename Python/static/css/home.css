@@ -1,0 +1,74 @@
+.banner-img{
+    width: 100%;
+    height: auto;
+}
+@media(max-width: 425px){
+    .banner-img{
+        height: 50vh;
+        object-fit: cover;
+    }
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block;
+    margin-top: 0;
+}
+
+.img-zoom{
+    transition: transform .35s ease-in;
+    border-right: 1px solid rgba(0, 0, 0, 0.1) !important;
+    border-radius: 0.37rem;
+    background-color: white;
+    cursor: pointer;
+    
+}
+.img-zoom:hover {
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    border-radius: 0.37rem;
+    transform: scale(1.1);
+}
+
+.remove-arrows input::-webkit-outer-spin-button,
+.remove-arrows input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+  background-color: white;
+}
+.remove-arrows input[type=number] {
+    background-color: white;
+    -moz-appearance: textfield;
+}
+
+.carousel-caption{
+    top: 5%;
+    font-size: 1rem;
+}
+@media (min-width: 768px){
+    .carousel-caption-fridge{
+        position: absolute;
+        right: 15%;
+        width: 35%;
+        /* bottom: 20px; */
+        left: 5%;
+        z-index: 10;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        color: #fff;
+        /* text-align: center;*/
+    } 
+    .carousel-caption > h3{
+        font-size: 2.5em;
+    }
+    .carousel-caption > p{
+        font-size: 1.5em;
+    }
+}
+.card-input-label{
+    width: 100%;
+}
+.card-input:hover {
+    cursor: pointer;
+}
+.card-input-element:checked + .card-input {
+     box-shadow: 0 0 1px 1px #3167eb;
+}

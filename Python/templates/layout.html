@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <link rel="icon" href="static/images/favicon.ico">
+
+    {% if title %}
+    <title>{{ title }}</title>
+    {% else %}
+    <title> Online Shopping site for Mobiles, Books, Watches, Shoes and More - Amazkart</title>
+    {% endif %}
+
+    <!-- jQuery -->
+    <script src="static/js/jquery-2.0.0.min.js" type="text/javascript"></script>
+
+    <!-- Bootstrap4 files-->
+    <script src="static/js/bootstrap.bundle.min.js" type="text/javascript"></script>
+    <link href="static/css/bootstrap.css" rel="stylesheet" type="text/css" />
+
+    <!-- Font awesome 5 -->
+    <link href="static/fonts/fontawesome/css/all.min.css" type="text/css" rel="stylesheet">
+
+    <!-- custom style -->
+    <link href="static/css/ui.css" rel="stylesheet" type="text/css" />
+    <link href="static/css/responsive.css" rel="stylesheet" media="only screen and (max-width: 1200px)" />
+
+    <!-- custom javascript -->
+    <script src="static/js/{{ scripts }}" type="text/javascript"></script>
+    <!-- Custom styles for this template -->
+    <link href="static/css/{{ styles }}" rel="stylesheet">
+</head>
+
+<body class="bg-white">
+    <header class="section-header sticky-top bg-white" id="navbar">
+        <section class="header-main">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-sm-3 col-5">
+                        <div class="brand-wrap align-items-center">
+                            <img class="logo" src="static/images/logo.png">
+                        </div> <!-- brand-wrap.// -->
+                    </div>
+                    <div class="ml-auto col-sm-4 col-6 text-md-right">
+                        <div class="d-flex justify-content-end align-items-center">
+                            {% if is_loggedin %}
+                            {% if not is_employee %}
+                            <a href="{{url_for('cart')}}" class="btn btn-light mr-1 mr-sm-3"><i
+                                    class="fas fa-shopping-cart"></i>
+                            </a>
+                            {% endif %}
+                            <div class="dropdown">
+                                <div class="icon icon-sm rounded-circle border" data-toggle="dropdown">
+                                    <i class="fa fa-user"></i>
+                                </div>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <div class="dropdown-header">{{loggedinname}}</div>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="{{url_for('profile')}}">Profile</a>
+                                    {% if not is_employee %}
+                                    <a class="dropdown-item" href="{{url_for('orders')}}">Orders</a>
+                                    <a class="dropdown-item" href="{{url_for('wishlist')}}">Wishlist</a>
+                                    <a class="dropdown-item" href="{{url_for('settings')}}">Settings</a>
+                                    {%else%}
+                                    <a class="dropdown-item" href="{{url_for('supplierhome')}}">Your Products</a>
+                                    {%endif%}
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="{{url_for('logout')}}">Logout</a>
+                                </div>
+                            </div>
+                            {% else %}
+                            <a class="btn btn-outline-primary mr-1 mr-sm-3" href="{{url_for('login')}}"> Login </a>
+                            <a class="btn btn-primary" href="{{url_for('signup')}}"> Register </a>
+                            {% endif%}
+                        </div>
+                    </div> <!-- col.// -->
+                </div> <!-- row.// -->
+            </div> <!-- container.// -->
+        </section> <!-- header-main .// -->
+        {% if not is_employee %}
+        <nav class="navbar navbar-main navbar-expand navbar-light border-top border-bottom">
+            <div class="container overflow-auto">
+                <div class="collapse navbar-collapse" id="main_nav">
+                    <ul class="navbar-nav d-flex justify-content-around w-100">
+                        <li class="nav-item">
+                            <a class="nav-link pl-0" href="{{url_for('home')}}">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{url_for('productListView')}}?category=Fashion">Fashion</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link"
+                                href="{{url_for('productListView')}}?category=Supermarket">Supermarket</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{url_for('productListView')}}?category=Mobiles">Mobiles</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link"
+                                href="{{url_for('productListView')}}?category=Electronics">Electronics</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{url_for('productListView')}}?category=Books">Books</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{url_for('productListView')}}?category=Furniture">Furniture</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{url_for('productListView')}}?category=Kitchen">Kitchen</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{url_for('productListView')}}?category=Baby">Baby</a>
+                        </li>
+                    </ul>
+                </div> <!-- collapse .// -->
+            </div> <!-- container .// -->
+        </nav>
+        {% endif %}
+    </header> <!-- section-header.// -->
+
+    {% block content %} {% endblock %}
+
+    <!-- ========================= FOOTER ========================= -->
+    <footer class="section-footer border-top" id="footer">
+        <div class="container">
+            <section class="footer-bottom row">
+                <div class="col-md-2">
+                    <p class="text-muted"> &copy 2021 Amazkart</p>
+                </div>
+                <div class="col-md-8 text-md-center">
+                    <span class="px-2">info@pixsellz.io</span>
+                    <span class="px-2">+879-332-9375</span>
+                    <span class="px-2">Street name 123, Avanue abc</span>
+                </div>
+                <div class="col-md-2 text-md-right text-muted">
+                    <i class="fab fa-lg fa-cc-visa"></i>
+                    <i class="fab fa-lg fa-cc-paypal"></i>
+                    <i class="fab fa-lg fa-cc-mastercard"></i>
+                </div>
+            </section>
+        </div><!-- //container -->
+    </footer>
+    <!-- ========================= FOOTER END // ========================= -->
+
+    <script>
+        var height = document.getElementById('navbar').offsetHeight +
+            document.getElementById('footer').offsetHeight +
+            document.getElementsByClassName('section-pagetop')[0].offsetHeight;
+        document.getElementsByClassName('section-content')[0].style.minHeight = `calc(100vh - ${height}px)`;
+    </script>
+</body>
+
+</html>

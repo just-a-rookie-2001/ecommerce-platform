@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+{% block content %}
+<section class="section-pagetop bg">
+    <div class="container">
+        <h1 class="title-page">Your Wishlist</h2>
+    </div>
+</section>
+<section class="section-content padding-y">
+    <div class="container">
+        <div class="row">
+            {% for item in wishlist%}
+            <div class="col-md-3">
+                <figure class="card card-product-grid">
+                    <a href="{{url_for('productDetailView')}}?id={{item.Product_ID}}" class="img-wrap">
+                        <img src="static/images/items/3.jpg">
+                    </a>
+                    <figcaption class="info-wrap">
+                        <div class="title">{{item.Name}}</div>
+                        <div class="mt-2 price">${{item.Price}}</div>
+                    </figcaption>
+                    <a href="{{url_for('wishlist')}}?pid={{item.Product_ID}}&action=delete" class="m-3 btn btn-outline-light">
+                        Delete from Wishlist
+                    </a>
+                </figure>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

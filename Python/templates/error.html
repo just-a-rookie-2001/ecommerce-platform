@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block content %}
+<section class="section-pagetop bg">
+    <div class="container">
+        <h1 class="title-page text-danger">Error</h2>
+    </div> <!-- container //  -->
+</section>
+<section class="section-content padding-y">
+    <div class="container">
+        <div class="row">
+            <div class="alert alert-danger" role="alert">
+                Error: {{e}}
+            </div>
+        </div>
+    </div>
+</section>
+{%endblock%}

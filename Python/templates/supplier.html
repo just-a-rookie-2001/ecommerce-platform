@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+{% block content %}
+<section class="section-pagetop bg">
+    <div class="container">
+        <h1 class="title-page">Your Products</h2>
+    </div> <!-- container //  -->
+</section>
+
+<section class="section-content padding-y">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-lg-3">
+                <figure class="card card-product-grid" style="height: calc(100% - 20px);">
+                    <a href="{{url_for('supplierProductEdit')}}" class="h-100">
+                        <div class=" img-wrap d-flex justify-content-center align-items-center">
+                            <i class="fa fa-plus-square" style="font-size: 100px;"></i>
+                        </div>
+                        <figcaption class="info-wrap border-top">
+                            <div class="title">Add a New Product</div>
+                        </figcaption>
+                    </a>
+                </figure> <!-- card // -->
+            </div> <!-- col.// -->
+            {% for product in products %}
+            <div class="col-md-6 col-lg-3">
+                <figure class="card card-product-grid">
+                    <a href="{{url_for('supplierProductEdit')}}?productid={{product.Product_ID}}">
+                        <div class="img-wrap"> <img src="static/images/items/5.jpg"> </div>
+                        <figcaption class="info-wrap border-top">
+                            <div class="title">{{product.Name}}</div>
+                            <div class="mt-2">
+                                <var class="price">${{product.Price}}</var> <!-- price-wrap.// -->
+                                <ul class="rating-stars float-right">
+                                    <li style="width:80%" class="stars-active">
+                                        {% for x in range(product.product_rating|int) %}
+                                        <i class="fa fa-star"></i>
+                                        {% endfor %}
+                                    </li>
+                                    <li>
+                                        {% for x in range(5) %}
+                                        <i class="fa fa-star"></i>
+                                        {% endfor %}
+                                    </li>
+                                </ul>
+                                <div class="text-muted mt-1">Qty: {{product.Units_In_Stock}}</div>
+                            </div>
+                        </figcaption>
+                    </a>
+                </figure> <!-- card // -->
+            </div> <!-- col.// -->
+            {% endfor%}
+        </div>
+    </div>
+</section>
+{% endblock content %}
