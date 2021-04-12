@@ -220,6 +220,8 @@ def supplierProductEdit():
         productid = -1 if request.args.get('productid') == None else request.args.get('productid')
         try:
             query = "call alter_product(%s,%s,%s,%s,%s,%s,%s)"
+            print("call alter_product(%s,%s,%s,%s,%s,%s,%s)".format((loggedinid, name, category,
+                            description, quantity, price, productid)))
             cursor.execute(query, (loggedinid, name, category,
                             description, quantity, price, productid))
             client.commit()
@@ -229,30 +231,6 @@ def supplierProductEdit():
             return render_template('error.html', e=e)
         finally:
             client.close()
-        # if productid != None:
-        #     try:
-        #         query = "update product set name=%s,category=%s,description=%s,units_in_stock=%s where Product_ID=%s"
-        #         cursor.execute(
-        #             query, (name, category, description, quantity, productid))
-        #         client.commit()
-        #     except Exception as e:
-        #         print("Can not update that specific product", e)
-        #         client.rollback()
-        #         return render_template('error.html', e=e)
-        #     finally:
-        #         client.close()
-        # else:
-        #     try:
-        #         query = "call alter_product(%s,%s,%s,%s,%s,%s)"
-        #         cursor.execute(query, (loggedinid, name, category,
-        #                        description, price, quantity, productid))
-        #         client.commit()
-        #     except Exception as e:
-        #         print("Can not insert that specific product", e)
-        #         client.rollback()
-        #         return render_template('error.html', e=e)
-        #     finally:
-        #         client.close()
         return redirect(url_for('supplierhome'))
 
 
@@ -264,10 +242,11 @@ def productListView(category='All'):
         host="localhost", user="public", password="password123", database="mydb")
     cursor = client.cursor(pymysql.cursors.DictCursor)
 
-    category = request.args.get('category') if request.args.get('category')!=None else 'All'
+    cat = request.args.get('category') if request.args.get('category')!=None else 'All'
     query = "call product_list(%s)"
-    cursor.execute(query, (category))
+    cursor.execute(query, (cat))
     product_list = cursor.fetchall()
+    category = product_list[0]['Category'] if product_list[0]['Category'] == cat else "All"
     return render_template('productListView.html', category=category, products=product_list, is_loggedin=is_loggedin, loggedinname=loggedinname, is_employee=is_employee, styles='home.css')
 
 
@@ -291,7 +270,7 @@ def productDetailView():
         client.close()
     else:
         try:
-            print(request.form)
+            # print(request.form)
             rating = request.form.get('rating')
             comment = request.form.get('comment')
             id = request.form.get('id')
@@ -301,13 +280,13 @@ def productDetailView():
             query = "insert into review(product_id, buyer_id, rating, comment) values (%s,%s,%s,%s)"
             cursor.execute(query, (id, loggedinid, rating, comment))
             client.commit()
+            return redirect(url_for('productDetailView', id=id))
         except Exception as e:
             print('Could not submit the review', e)
             client.rollback()
             return render_template('error.html', e=e)
         finally:
             client.close()
-            return redirect(url_for('productDetailView', id=id))
 
     return render_template('productDetailView.html', product=product, reviews=reviews, is_loggedin=is_loggedin, loggedinname=loggedinname, is_employee=is_employee, styles='home.css', scripts="home.js")
 
@@ -327,14 +306,13 @@ def cart():
             query = "call addtocart(%s,%s,%s)"
             cursor.execute(query, (id, loggedinid, qty))
             client.commit()
+            if ('addtocart' in request.form): return redirect(url_for('productDetailView', id=id))
         except Exception as e:
             print('Couldnt add item to your cart', e)
             client.rollback()
             return render_template('error.html', e=e)
         finally:
             client.close()
-            if ('addtocart' in request.form):
-                return redirect(url_for('productDetailView', id=id))
 
     client = pymysql.connect(
         host="localhost", user="public", password="password123", database="mydb")
@@ -442,13 +420,13 @@ def profile():
                 query = "update buyer set first_name=%s, last_name=%s where Buyer_ID=%s"
                 cursor.execute(query, (first_name, last_name, loggedinid))
                 client.commit()
+                return redirect(url_for('home'))
             except Exception as e:
                 print('Could not edit the buyer data', e)
                 client.rollback()
                 return render_template('error.html', e=e)
             finally:
                 client.close()
-                return redirect(url_for('home'))
         else:
             try:
                 Name = request.form.get('Name')
@@ -462,13 +440,13 @@ def profile():
                 cursor.execute(query, (Name, Address_Line1, Address_Line2,
                                Zip, City, State, Country, loggedinid))
                 client.commit()
+                return redirect(url_for('supplierhome'))
             except Exception as e:
                 print('Could not edit the supplier data', e)
                 client.rollback()
                 return render_template('error.html', e=e)
             finally:
                 client.close()
-                return redirect(url_for('supplierhome'))
     return render_template('profile.html', user=user, is_loggedin=is_loggedin, loggedinname=loggedinname, is_employee=is_employee, styles='home.css')
 
 
@@ -536,7 +514,7 @@ def wishlist():
     client = pymysql.connect(
         host="localhost", user="public", password="password123", database="mydb")
     cursor = client.cursor(pymysql.cursors.DictCursor)
-    if (request.args.get('action') in ['post', 'delete']):
+    if (request.args.get('action') in ['insert', 'delete']):
         try:
             pid = request.args.get('pid')
             query =  "call alter_wishlist(%s,%s,%s)"
