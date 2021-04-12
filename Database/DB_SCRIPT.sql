@@ -7,7 +7,6 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- -----------------------------------------------------
 -- Schema mydb
 -- -----------------------------------------------------
-DROP SCHEMA IF EXISTS `mydb` ;
 
 -- -----------------------------------------------------
 -- Schema mydb
@@ -16,300 +15,711 @@ CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 ;
 USE `mydb` ;
 
 -- -----------------------------------------------------
--- Table `mydb`.`User`
+-- Table `mydb`.`user`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`User` ;
+DROP TABLE IF EXISTS `mydb`.`user` ;
 
-CREATE TABLE IF NOT EXISTS `mydb`.`User` (
+CREATE TABLE IF NOT EXISTS `mydb`.`user` (
   `ID` INT NOT NULL AUTO_INCREMENT,
   `Email` VARCHAR(45) NOT NULL,
   `Password` VARCHAR(45) NOT NULL,
   `Date_Created` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
   `Type` VARCHAR(8) NULL DEFAULT 'BUYER',
-  `Phone_Number` BIGINT(10) NULL,
+  `Phone_Number` BIGINT NULL DEFAULT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE INDEX `person_id_UNIQUE` (`ID` ASC) VISIBLE,
   UNIQUE INDEX `person_email_UNIQUE` (`Email` ASC) VISIBLE)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+AUTO_INCREMENT = 34
+DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Buyer`
+-- Table `mydb`.`buyer`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`Buyer` ;
+DROP TABLE IF EXISTS `mydb`.`buyer` ;
 
-CREATE TABLE IF NOT EXISTS `mydb`.`Buyer` (
+CREATE TABLE IF NOT EXISTS `mydb`.`buyer` (
   `Buyer_ID` INT NOT NULL,
-  `has_membership` TINYINT(1) NULL DEFAULT 0,
-  `First_Name` VARCHAR(45) NULL,
-  `Last_Name` VARCHAR(45) NULL,
+  `has_membership` TINYINT(1) NULL DEFAULT '0',
+  `First_Name` VARCHAR(45) NULL DEFAULT NULL,
+  `Last_Name` VARCHAR(45) NULL DEFAULT NULL,
   PRIMARY KEY (`Buyer_ID`),
   UNIQUE INDEX `person_id_UNIQUE` (`Buyer_ID` ASC) VISIBLE,
   CONSTRAINT `person_id_fk_key`
     FOREIGN KEY (`Buyer_ID`)
-    REFERENCES `mydb`.`User` (`ID`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+    REFERENCES `mydb`.`user` (`ID`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Supplier`
+-- Table `mydb`.`address`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`Supplier` ;
+DROP TABLE IF EXISTS `mydb`.`address` ;
 
-CREATE TABLE IF NOT EXISTS `mydb`.`Supplier` (
-  `Supplier_ID` INT NOT NULL,
-  `Name` VARCHAR(45) NOT NULL,
-  `Address_Line1` VARCHAR(45) NULL,
-  `Address_Line2` VARCHAR(45) NULL,
-  `City` VARCHAR(45) NULL,
-  `State` VARCHAR(45) NULL,
-  `Zip` INT NULL,
-  `Country` VARCHAR(45) NULL,
-  PRIMARY KEY (`Supplier_ID`),
-  INDEX `fk_Organisation_Person1_idx` (`Supplier_ID` ASC) VISIBLE,
-  CONSTRAINT `fk_Organisation_Person1`
-    FOREIGN KEY (`Supplier_ID`)
-    REFERENCES `mydb`.`User` (`ID`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `mydb`.`Address`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`Address` ;
-
-CREATE TABLE IF NOT EXISTS `mydb`.`Address` (
+CREATE TABLE IF NOT EXISTS `mydb`.`address` (
   `Address_ID` INT NOT NULL AUTO_INCREMENT,
   `Buyer_ID` INT NOT NULL,
-  `Address_Line1` VARCHAR(45) NULL,
-  `Address_Line2` VARCHAR(45) NULL,
-  `City` VARCHAR(45) NULL,
-  `State` VARCHAR(45) NULL,
-  `Zip` INT NULL,
-  `Country` VARCHAR(45) NULL,
+  `Address_Line1` VARCHAR(45) NULL DEFAULT NULL,
+  `Address_Line2` VARCHAR(45) NULL DEFAULT NULL,
+  `City` VARCHAR(45) NULL DEFAULT NULL,
+  `State` VARCHAR(45) NULL DEFAULT NULL,
+  `Zip` INT NULL DEFAULT NULL,
+  `Country` VARCHAR(45) NULL DEFAULT NULL,
   PRIMARY KEY (`Address_ID`),
   UNIQUE INDEX `AddressID_UNIQUE` (`Address_ID` ASC) VISIBLE,
   INDEX `fk_Address_Buyer1_idx` (`Buyer_ID` ASC) VISIBLE,
   CONSTRAINT `fk_Address_Buyer1`
     FOREIGN KEY (`Buyer_ID`)
-    REFERENCES `mydb`.`Buyer` (`Buyer_ID`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+    REFERENCES `mydb`.`buyer` (`Buyer_ID`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 12
+DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Payment`
+-- Table `mydb`.`payment`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`Payment` ;
+DROP TABLE IF EXISTS `mydb`.`payment` ;
 
-CREATE TABLE IF NOT EXISTS `mydb`.`Payment` (
+CREATE TABLE IF NOT EXISTS `mydb`.`payment` (
   `Payment_ID` INT NOT NULL AUTO_INCREMENT,
   `Buyer_ID` INT NOT NULL,
-  `Card_Name` VARCHAR(45) NULL,
-  `Card_Number` BIGINT(15) NULL,
-  `Card_Expiry_Date` DATE NULL,
-  INDEX `fk_Payment_Buyer1_idx` (`Buyer_ID` ASC) VISIBLE,
+  `Card_Name` VARCHAR(45) NULL DEFAULT NULL,
+  `Card_Number` BIGINT NULL DEFAULT NULL,
+  `Card_Expiry_Date` DATE NULL DEFAULT NULL,
   PRIMARY KEY (`Payment_ID`),
   UNIQUE INDEX `Payment_ID_UNIQUE` (`Payment_ID` ASC) VISIBLE,
+  INDEX `fk_Payment_Buyer1_idx` (`Buyer_ID` ASC) VISIBLE,
   CONSTRAINT `fk_Payment_Buyer1`
     FOREIGN KEY (`Buyer_ID`)
-    REFERENCES `mydb`.`Buyer` (`Buyer_ID`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+    REFERENCES `mydb`.`buyer` (`Buyer_ID`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 10
+DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Order`
+-- Table `mydb`.`buyerorder`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`Order` ;
+DROP TABLE IF EXISTS `mydb`.`buyerorder` ;
 
-CREATE TABLE IF NOT EXISTS `mydb`.`Order` (
+CREATE TABLE IF NOT EXISTS `mydb`.`buyerorder` (
   `Order_ID` INT NOT NULL AUTO_INCREMENT,
   `Buyer_ID` INT NOT NULL,
   `Payment_ID` INT NOT NULL,
   `Address_ID` INT NOT NULL,
-  `Order_Date` DATETIME NULL,
-  `Delivery_Date` DATETIME NULL,
-  `is_completed` TINYINT(1) NULL DEFAULT 0,
+  `Order_Date` DATE NULL DEFAULT NULL,
+  `Delivery_Date` DATE NULL DEFAULT NULL,
+  `is_completed` TINYINT(1) NULL DEFAULT '0',
   PRIMARY KEY (`Order_ID`),
   UNIQUE INDEX `Order_ID_UNIQUE` (`Order_ID` ASC) VISIBLE,
   INDEX `fk_Order_Buyer1_idx` (`Buyer_ID` ASC) VISIBLE,
   INDEX `fk_Order_Payment1_idx` (`Payment_ID` ASC) VISIBLE,
   INDEX `fk_Order_Address1_idx` (`Address_ID` ASC) VISIBLE,
-  CONSTRAINT `fk_Order_Buyer1`
-    FOREIGN KEY (`Buyer_ID`)
-    REFERENCES `mydb`.`Buyer` (`Buyer_ID`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Order_Payment1`
-    FOREIGN KEY (`Payment_ID`)
-    REFERENCES `mydb`.`Payment` (`Payment_ID`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
   CONSTRAINT `fk_Order_Address1`
     FOREIGN KEY (`Address_ID`)
-    REFERENCES `mydb`.`Address` (`Address_ID`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+    REFERENCES `mydb`.`address` (`Address_ID`),
+  CONSTRAINT `fk_Order_Buyer1`
+    FOREIGN KEY (`Buyer_ID`)
+    REFERENCES `mydb`.`buyer` (`Buyer_ID`),
+  CONSTRAINT `fk_Order_Payment1`
+    FOREIGN KEY (`Payment_ID`)
+    REFERENCES `mydb`.`payment` (`Payment_ID`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 13
+DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Product`
+-- Table `mydb`.`supplier`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`Product` ;
+DROP TABLE IF EXISTS `mydb`.`supplier` ;
 
-CREATE TABLE IF NOT EXISTS `mydb`.`Product` (
+CREATE TABLE IF NOT EXISTS `mydb`.`supplier` (
+  `Supplier_ID` INT NOT NULL,
+  `Name` VARCHAR(45) NOT NULL,
+  `Address_Line1` VARCHAR(45) NULL DEFAULT NULL,
+  `Address_Line2` VARCHAR(45) NULL DEFAULT NULL,
+  `City` VARCHAR(45) NULL DEFAULT NULL,
+  `State` VARCHAR(45) NULL DEFAULT NULL,
+  `Zip` INT NULL DEFAULT NULL,
+  `Country` VARCHAR(45) NULL DEFAULT NULL,
+  PRIMARY KEY (`Supplier_ID`),
+  INDEX `fk_Organisation_Person1_idx` (`Supplier_ID` ASC) VISIBLE,
+  CONSTRAINT `fk_Organisation_Person1`
+    FOREIGN KEY (`Supplier_ID`)
+    REFERENCES `mydb`.`user` (`ID`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`product`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mydb`.`product` ;
+
+CREATE TABLE IF NOT EXISTS `mydb`.`product` (
   `Product_ID` INT NOT NULL AUTO_INCREMENT,
   `Supplier_ID` INT NOT NULL,
-  `Category` VARCHAR(45) NULL,
-  `Name` VARCHAR(45) NULL,
-  `Description` VARCHAR(45) NULL,
-  `Units_In_Stock` INT NULL,
-  `Price` DECIMAL(9,2) NULL,
-  `Product_Rating` DECIMAL(1,1) NULL,
+  `Category` VARCHAR(45) NULL DEFAULT NULL,
+  `Name` VARCHAR(45) NULL DEFAULT NULL,
+  `Description` VARCHAR(45) NULL DEFAULT NULL,
+  `Units_In_Stock` INT NULL DEFAULT NULL,
+  `Price` DECIMAL(9,2) NULL DEFAULT NULL,
+  `product_rating` DECIMAL(2,1) NULL DEFAULT NULL,
   PRIMARY KEY (`Product_ID`),
   UNIQUE INDEX `Product_ID_UNIQUE` (`Product_ID` ASC) VISIBLE,
   INDEX `fk_Product_Organisation1_idx` (`Supplier_ID` ASC) VISIBLE,
   CONSTRAINT `fk_Product_Organisation1`
     FOREIGN KEY (`Supplier_ID`)
-    REFERENCES `mydb`.`Supplier` (`Supplier_ID`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+    REFERENCES `mydb`.`supplier` (`Supplier_ID`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 6
+DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Wishlist`
+-- Table `mydb`.`order_has_product`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`Wishlist` ;
+DROP TABLE IF EXISTS `mydb`.`order_has_product` ;
 
-CREATE TABLE IF NOT EXISTS `mydb`.`Wishlist` (
-  `Product_ID` INT NOT NULL,
-  `Buyer_Buyer_ID` INT NOT NULL,
-  PRIMARY KEY (`Product_ID`, `Buyer_Buyer_ID`),
-  INDEX `fk_Wishlist_Product1_idx` (`Product_ID` ASC) VISIBLE,
-  INDEX `fk_Wishlist_Buyer1_idx` (`Buyer_Buyer_ID` ASC) VISIBLE,
-  CONSTRAINT `fk_Wishlist_Product1`
-    FOREIGN KEY (`Product_ID`)
-    REFERENCES `mydb`.`Product` (`Product_ID`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Wishlist_Buyer1`
-    FOREIGN KEY (`Buyer_Buyer_ID`)
-    REFERENCES `mydb`.`Buyer` (`Buyer_ID`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `mydb`.`ShoppingCart`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`ShoppingCart` ;
-
-CREATE TABLE IF NOT EXISTS `mydb`.`ShoppingCart` (
-  `Product_ID` INT NOT NULL,
-  `Buyer_ID` INT NOT NULL,
-  `Quantity` INT NULL,
-  PRIMARY KEY (`Product_ID`, `Buyer_ID`),
-  INDEX `fk_Wishlist_Product1_idx` (`Product_ID` ASC) VISIBLE,
-  INDEX `fk_ShoppingCart_Buyer1_idx` (`Buyer_ID` ASC) VISIBLE,
-  CONSTRAINT `fk_Wishlist_Product10`
-    FOREIGN KEY (`Product_ID`)
-    REFERENCES `mydb`.`Product` (`Product_ID`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_ShoppingCart_Buyer1`
-    FOREIGN KEY (`Buyer_ID`)
-    REFERENCES `mydb`.`Buyer` (`Buyer_ID`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `mydb`.`Review`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`Review` ;
-
-CREATE TABLE IF NOT EXISTS `mydb`.`Review` (
-  `Product_ID` INT NOT NULL,
-  `Buyer_ID` INT NOT NULL,
-  `Rating` DECIMAL(1,1) NULL,
-  `Comment` TEXT(200) NULL,
-  PRIMARY KEY (`Product_ID`, `Buyer_ID`),
-  INDEX `fk_Wishlist_Product1_idx` (`Product_ID` ASC) VISIBLE,
-  INDEX `fk_Wishlist_Buyer1_idx` (`Buyer_ID` ASC) VISIBLE,
-  CONSTRAINT `fk_Wishlist_Product11`
-    FOREIGN KEY (`Product_ID`)
-    REFERENCES `mydb`.`Product` (`Product_ID`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Wishlist_Buyer10`
-    FOREIGN KEY (`Buyer_ID`)
-    REFERENCES `mydb`.`Buyer` (`Buyer_ID`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `mydb`.`Order_has_Product`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`Order_has_Product` ;
-
-CREATE TABLE IF NOT EXISTS `mydb`.`Order_has_Product` (
+CREATE TABLE IF NOT EXISTS `mydb`.`order_has_product` (
   `Order_ID` INT NOT NULL,
   `Product_ID` INT NOT NULL,
-  `Quantity` INT NULL,
+  `Quantity` INT NULL DEFAULT NULL,
   PRIMARY KEY (`Order_ID`, `Product_ID`),
   INDEX `fk_Order_has_Product_Product1_idx` (`Product_ID` ASC) VISIBLE,
   INDEX `fk_Order_has_Product_Order1_idx` (`Order_ID` ASC) VISIBLE,
   CONSTRAINT `fk_Order_has_Product_Order1`
     FOREIGN KEY (`Order_ID`)
-    REFERENCES `mydb`.`Order` (`Order_ID`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    REFERENCES `mydb`.`buyerorder` (`Order_ID`),
   CONSTRAINT `fk_Order_has_Product_Product1`
     FOREIGN KEY (`Product_ID`)
-    REFERENCES `mydb`.`Product` (`Product_ID`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+    REFERENCES `mydb`.`product` (`Product_ID`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Returns`
+-- Table `mydb`.`orderreturns`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`Returns` ;
+DROP TABLE IF EXISTS `mydb`.`orderreturns` ;
 
-CREATE TABLE IF NOT EXISTS `mydb`.`Returns` (
+CREATE TABLE IF NOT EXISTS `mydb`.`orderreturns` (
+  `returnid` INT NOT NULL AUTO_INCREMENT,
+  `quantity` INT NULL DEFAULT NULL,
   `Order_ID` INT NOT NULL,
   `Product_ID` INT NOT NULL,
-  `Quantity` INT NULL,
-  `Comments` TEXT(200) NULL,
-  `Is_Approved` TINYINT(1) NULL DEFAULT 0,
-  PRIMARY KEY (`Order_ID`, `Product_ID`),
-  INDEX `fk_Order_has_Product_copy1_Order_has_Product2_idx` (`Product_ID` ASC) INVISIBLE,
-  CONSTRAINT `fk_Order_has_Product_copy1_Order_has_Product1`
+  PRIMARY KEY (`returnid`),
+  UNIQUE INDEX `returnid_UNIQUE` (`returnid` ASC) VISIBLE,
+  INDEX `fk_orderreturns_Order1_idx` (`Order_ID` ASC) VISIBLE,
+  INDEX `fk_orderreturns_Product1_idx` (`Product_ID` ASC) VISIBLE,
+  CONSTRAINT `fk_orderreturns_Order1`
     FOREIGN KEY (`Order_ID`)
-    REFERENCES `mydb`.`Order_has_Product` (`Order_ID`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Order_has_Product_copy1_Order_has_Product2`
+    REFERENCES `mydb`.`buyerorder` (`Order_ID`),
+  CONSTRAINT `fk_orderreturns_Product1`
     FOREIGN KEY (`Product_ID`)
-    REFERENCES `mydb`.`Order_has_Product` (`Product_ID`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+    REFERENCES `mydb`.`product` (`Product_ID`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 22
+DEFAULT CHARACTER SET = utf8;
 
+
+-- -----------------------------------------------------
+-- Table `mydb`.`review`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mydb`.`review` ;
+
+CREATE TABLE IF NOT EXISTS `mydb`.`review` (
+  `reviewid` INT NOT NULL AUTO_INCREMENT,
+  `Product_ID` INT NOT NULL,
+  `Buyer_ID` INT NOT NULL,
+  `Rating` DECIMAL(2,1) NULL DEFAULT '0.0',
+  `Comment` TEXT NULL DEFAULT NULL,
+  PRIMARY KEY (`reviewid`),
+  UNIQUE INDEX `reviewid_UNIQUE` (`reviewid` ASC) VISIBLE,
+  INDEX `fk_Wishlist_Product1_idx` (`Product_ID` ASC) VISIBLE,
+  INDEX `fk_Wishlist_Buyer1_idx` (`Buyer_ID` ASC) VISIBLE,
+  CONSTRAINT `fk_Wishlist_Buyer10`
+    FOREIGN KEY (`Buyer_ID`)
+    REFERENCES `mydb`.`buyer` (`Buyer_ID`),
+  CONSTRAINT `fk_Wishlist_Product11`
+    FOREIGN KEY (`Product_ID`)
+    REFERENCES `mydb`.`product` (`Product_ID`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 8
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`shoppingcart`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mydb`.`shoppingcart` ;
+
+CREATE TABLE IF NOT EXISTS `mydb`.`shoppingcart` (
+  `Product_ID` INT NOT NULL,
+  `Buyer_ID` INT NOT NULL,
+  `Quantity` INT NULL DEFAULT NULL,
+  PRIMARY KEY (`Product_ID`, `Buyer_ID`),
+  INDEX `fk_Wishlist_Product1_idx` (`Product_ID` ASC) VISIBLE,
+  INDEX `fk_ShoppingCart_Buyer1_idx` (`Buyer_ID` ASC) VISIBLE,
+  CONSTRAINT `fk_ShoppingCart_Buyer1`
+    FOREIGN KEY (`Buyer_ID`)
+    REFERENCES `mydb`.`buyer` (`Buyer_ID`),
+  CONSTRAINT `fk_Wishlist_Product10`
+    FOREIGN KEY (`Product_ID`)
+    REFERENCES `mydb`.`product` (`Product_ID`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`user_log`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mydb`.`user_log` ;
+
+CREATE TABLE IF NOT EXISTS `mydb`.`user_log` (
+  `iduser_log` INT NOT NULL AUTO_INCREMENT,
+  `email` VARCHAR(45) NULL DEFAULT NULL,
+  `date_deleted` DATETIME NULL DEFAULT NULL,
+  `type` VARCHAR(45) NULL DEFAULT NULL,
+  PRIMARY KEY (`iduser_log`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 7
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`wishlist`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mydb`.`wishlist` ;
+
+CREATE TABLE IF NOT EXISTS `mydb`.`wishlist` (
+  `Product_ID` INT NOT NULL,
+  `Buyer_ID` INT NOT NULL,
+  PRIMARY KEY (`Product_ID`, `Buyer_ID`),
+  INDEX `fk_Wishlist_Product1_idx` (`Product_ID` ASC) VISIBLE,
+  INDEX `fk_Wishlist_Buyer1_idx` (`Buyer_ID` ASC) VISIBLE,
+  CONSTRAINT `fk_Wishlist_Buyer1`
+    FOREIGN KEY (`Buyer_ID`)
+    REFERENCES `mydb`.`buyer` (`Buyer_ID`),
+  CONSTRAINT `fk_Wishlist_Product1`
+    FOREIGN KEY (`Product_ID`)
+    REFERENCES `mydb`.`product` (`Product_ID`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+USE `mydb` ;
+
+-- -----------------------------------------------------
+-- procedure addtocart
+-- -----------------------------------------------------
+
+USE `mydb`;
+DROP procedure IF EXISTS `mydb`.`addtocart`;
+
+DELIMITER $$
+USE `mydb`$$
+CREATE DEFINER=`public`@`localhost` PROCEDURE `addtocart`(in pid int, in bid int, in qty int)
+begin
+	DECLARE exist, oldqty, stock int;
+    select units_in_stock into stock from product where Product_ID=pid;
+    if qty > stock then
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Quantity selected is more than the items available';
+    else
+		select count(*) into exist from shoppingcart where Buyer_ID=bid and Product_ID=pid;
+		update product set Units_In_Stock = stock - qty where Product_ID=pid;
+        if exist=0 then
+			insert into shoppingcart values(pid, bid, qty);
+		else
+			select Quantity into oldqty from shoppingcart where Buyer_ID=bid and Product_ID=pid;
+			update shoppingcart set Quantity = oldqty + qty where Buyer_ID=bid and Product_ID=pid;
+		end if;
+	end if;
+end$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure alter_address
+-- -----------------------------------------------------
+
+USE `mydb`;
+DROP procedure IF EXISTS `mydb`.`alter_address`;
+
+DELIMITER $$
+USE `mydb`$$
+CREATE DEFINER=`public`@`localhost` PROCEDURE `alter_address`(in bid int, in al1 varchar(45), in al2 varchar(45), in cty varchar(45), in stt varchar(45), in zp int, in cntry varchar(45))
+begin
+	declare a1,a2,c varchar(50);
+    declare z, finished int;
+    DECLARE adres CURSOR FOR select upper(address_line1), upper(address_line2), zip, upper(Country) from address where Buyer_ID=bid;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished = 1;
+    open adres;
+    getadd: LOOP
+			FETCH adres INTO a1,a2,z,c;
+			IF finished = 1 THEN 
+				LEAVE getadd;
+			END IF;
+            
+			if TRIM(upper(a1))=al1 and TRIM(upper(a2))=al2 and zp=z and TRIM(upper(cntry))=c then
+				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'This address already exists';
+			end if;
+	END LOOP getadd;
+	CLOSE adres;
+	INSERT INTO Address(Buyer_ID, Address_Line1, Address_Line2, City, State, Zip, Country) values(bid, al1, al2, cty, stt, zp, cntry);
+end$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure alter_payment
+-- -----------------------------------------------------
+
+USE `mydb`;
+DROP procedure IF EXISTS `mydb`.`alter_payment`;
+
+DELIMITER $$
+USE `mydb`$$
+CREATE DEFINER=`public`@`localhost` PROCEDURE `alter_payment`(in bid int, in cname varchar(45), in cnum bigint, in cexpdt date)
+begin
+	declare nme varchar(50);
+    declare numb, finished bigint;
+    declare expdate date;
+	DECLARE py CURSOR FOR select upper(card_name), card_number, Card_Expiry_Date from payment where Buyer_ID=bid;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished = 1;
+    open py;
+    getpy: LOOP
+			FETCH py INTO nme, numb,expdate;
+			IF finished = 1 THEN 
+				LEAVE getpy;
+			END IF;
+            
+			if cexpdt <= CURRENT_DATE then
+				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'This card is already expired. Please add a new card';
+			elseif cnum=numb then
+				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'You have already added this card';
+			end if;
+	END LOOP getpy;
+	CLOSE py;
+	INSERT INTO payment (Buyer_ID, Card_Name, Card_Number, Card_Expiry_Date) values(bid, cname, cnum, cexpdt);
+end$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure alter_product
+-- -----------------------------------------------------
+
+USE `mydb`;
+DROP procedure IF EXISTS `mydb`.`alter_product`;
+
+DELIMITER $$
+USE `mydb`$$
+CREATE DEFINER=`public`@`localhost` PROCEDURE `alter_product`(in sid int, in nme varchar(50), in cate varchar(50),in des varchar(50), in stock int, in p decimal, in pid int)
+begin
+    if pid = -1 then
+		insert into product(Supplier_ID,name,category,description,units_in_stock,price) values(sid,nme,cate,des,stock,p);
+	else
+		update product set name=nme,category=cate,description=des,units_in_stock=stock where Product_ID=pid;
+    end if;
+end$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure alter_wishlist
+-- -----------------------------------------------------
+
+USE `mydb`;
+DROP procedure IF EXISTS `mydb`.`alter_wishlist`;
+
+DELIMITER $$
+USE `mydb`$$
+CREATE DEFINER=`public`@`localhost` PROCEDURE `alter_wishlist`(in pid int, in bid int, in a varchar(7))
+begin
+    if a = 'insert' then
+		if (select count(*) from wishlist where product_id=pid and buyer_id=bid) > 0 then
+			SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'This item is already in the wishlist';
+		else
+			insert into wishlist values(pid,bid);
+		end if;
+	elseif a = 'delete' then
+		if (select count(*) from wishlist where product_id=pid and buyer_id=bid) <= 0 then
+			SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Add the item to your wishlist first to be able to delete';
+		else
+			delete from wishlist where product_id=pid and buyer_id=bid;
+		end if;
+    end if;
+end$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure checkout
+-- -----------------------------------------------------
+
+USE `mydb`;
+DROP procedure IF EXISTS `mydb`.`checkout`;
+
+DELIMITER $$
+USE `mydb`$$
+CREATE DEFINER=`public`@`localhost` PROCEDURE `checkout`(in bid int, in payid int, in addid int)
+begin
+    DECLARE p_id, qty, x, finished, lastorderid int;
+    DECLARE cart CURSOR FOR SELECT Product_ID, Quantity from shoppingcart where Buyer_ID=bid;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished = 1;
+    if (select count(*) from shoppingcart where Buyer_ID=bid > 0) then
+		select max(order_id) into lastorderid from buyerorder;
+        if lastorderid > 0 then
+			select lastorderid into lastorderid;
+		else
+			select 0 into lastorderid;
+		end if;
+		insert into buyerorder values(lastorderid+1,bid,payid,addid,current_date,current_date+14, 0);
+		OPEN cart;
+		getCart: LOOP
+			FETCH cart INTO p_id, qty;
+			IF finished = 1 THEN 
+				LEAVE getCart;
+			END IF;
+			insert into order_has_product values (lastorderid+1,p_id, qty);
+			delete from shoppingcart where Buyer_ID=bid and Product_ID=p_id;
+		END LOOP getCart;
+		CLOSE cart;
+    end if;
+end$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure create_user
+-- -----------------------------------------------------
+
+USE `mydb`;
+DROP procedure IF EXISTS `mydb`.`create_user`;
+
+DELIMITER $$
+USE `mydb`$$
+CREATE DEFINER=`public`@`localhost` PROCEDURE `create_user`(in email varchar(45), in _password varchar(45), in confirm_password varchar(45), in user_type varchar(10), in phonenum bigint)
+begin
+	if email NOT LIKE '%_@_%_.__%' then
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Please enter a valid email';
+	end if;
+    if length(_password) <= 7 then
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Your password must be atleast 8 characters in length';
+	end if;
+    if _password != confirm_password then
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Your passwords do not match';
+	end if;
+    if upper(user_type) not in ('BUYER','SUPPLIER') then
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'User must be either a buyer or a supplier';
+	end if;
+    if length(phonenum)<=9 then
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Phone number must be atleast 10 digits';
+	end if;
+    
+    INSERT INTO User(Email, Password, Phone_Number, Type) values(email, _password, phonenum, user_type);
+end$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure login_user
+-- -----------------------------------------------------
+
+USE `mydb`;
+DROP procedure IF EXISTS `mydb`.`login_user`;
+
+DELIMITER $$
+USE `mydb`$$
+CREATE DEFINER=`public`@`localhost` PROCEDURE `login_user`(in mail varchar(45), in _password varchar(45), out loggedinid int, out loggedinname varchar(50), out is_employee bool, out is_loggedin bool )
+begin
+	declare exist,uid,buy int;
+    declare fname,lname varchar(45);
+	select count(*) into exist from user where Email=mail and Password=_password;
+    if exist <= 0 then
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Incorrect email or password';
+	else
+		select id into uid from user where Email=mail and Password=_password;
+        set loggedinid = uid;
+        set is_loggedin = 1;
+        select count(*) into buy from buyer where buyer_id=uid;
+        if (buy > 0) then
+			set is_employee = 0;
+            select first_name, last_name into fname,lname from buyer where buyer_id=uid;
+            set loggedinname = concat(fname," ", lname);
+		else
+			set is_employee = 1;
+            select `name` into loggedinname from supplier where supplier_id=uid;
+        end if;
+    end if;
+end$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure product_list
+-- -----------------------------------------------------
+
+USE `mydb`;
+DROP procedure IF EXISTS `mydb`.`product_list`;
+
+DELIMITER $$
+USE `mydb`$$
+CREATE DEFINER=`public`@`localhost` PROCEDURE `product_list`(cat varchar(50))
+begin
+	if upper(cat) in (select upper(category) from product) then
+		select * from Product where upper(Category)=upper(cat) and units_in_stock>0;
+	else
+		select * from Product where units_in_stock>0;
+    end if;
+end$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure removefromcart
+-- -----------------------------------------------------
+
+USE `mydb`;
+DROP procedure IF EXISTS `mydb`.`removefromcart`;
+
+DELIMITER $$
+USE `mydb`$$
+CREATE DEFINER=`public`@`localhost` PROCEDURE `removefromcart`(in pid int, in bid int)
+begin
+	declare qty, stock int;
+	select quantity into qty from shoppingcart where Product_ID=pid and Buyer_ID=bid;
+    select Units_in_stock into stock from product where Product_ID=pid;
+	delete from shoppingcart where Product_ID=pid and Buyer_ID=bid;
+    update product set Units_in_stock = stock + qty where Product_ID=pid;
+end$$
+
+DELIMITER ;
+USE `mydb`;
+
+DELIMITER $$
+
+USE `mydb`$$
+DROP TRIGGER IF EXISTS `mydb`.`delete_buyer` $$
+USE `mydb`$$
+CREATE
+DEFINER=`public`@`localhost`
+TRIGGER `mydb`.`delete_buyer`
+BEFORE DELETE ON `mydb`.`buyer`
+FOR EACH ROW
+begin
+	delete from order_has_product where order_id in (select order_id from buyerorder where buyer_id=old.buyer_id);
+    delete from orderreturns where order_id in (select order_id from buyerorder where buyer_id=old.buyer_id);
+    delete from buyerorder where buyer_id=old.buyer_id;
+    delete from payment where buyer_id=old.buyer_id;
+    delete from address where buyer_id=old.buyer_id;
+    delete from review where buyer_id=old.buyer_id;
+    delete from wishlist where buyer_id=old.buyer_id;
+end$$
+
+
+USE `mydb`$$
+DROP TRIGGER IF EXISTS `mydb`.`delete_user` $$
+USE `mydb`$$
+CREATE
+DEFINER=`public`@`localhost`
+TRIGGER `mydb`.`delete_user`
+AFTER DELETE ON `mydb`.`buyer`
+FOR EACH ROW
+begin
+	declare umail varchar(45);
+    select email into umail from user where id=old.buyer_id;
+    insert into user_log (email, date_deleted, type) values(umail, CURRENT_TIMESTAMP, 'BUYER');
+    delete from user where id=old.buyer_id;
+end$$
+
+
+USE `mydb`$$
+DROP TRIGGER IF EXISTS `mydb`.`restock` $$
+USE `mydb`$$
+CREATE
+DEFINER=`public`@`localhost`
+TRIGGER `mydb`.`restock`
+BEFORE INSERT ON `mydb`.`orderreturns`
+FOR EACH ROW
+begin
+	declare stock int;
+    select units_in_stock into stock from product where product.Product_ID=new.product_id;
+	update product set units_in_stock = stock + New.quantity where product.Product_ID=new.product_id;
+    delete from order_has_product where product_id=New.product_id and order_id=NEW.order_id;
+end$$
+
+
+USE `mydb`$$
+DROP TRIGGER IF EXISTS `mydb`.`return_check` $$
+USE `mydb`$$
+CREATE
+DEFINER=`public`@`localhost`
+TRIGGER `mydb`.`return_check`
+BEFORE INSERT ON `mydb`.`orderreturns`
+FOR EACH ROW
+begin
+	declare deliverydt date;
+    select delivery_date into deliverydt from buyerorder where Order_ID=new.Order_ID;
+    if DATE_ADD(`deliverydt` , INTERVAL 14 DAY) < current_date then
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'You can not return the item after 2 weeks from the delivery date';
+    end if;
+end$$
+
+
+USE `mydb`$$
+DROP TRIGGER IF EXISTS `mydb`.`review_calc_insert` $$
+USE `mydb`$$
+CREATE
+DEFINER=`public`@`localhost`
+TRIGGER `mydb`.`review_calc_insert`
+AFTER INSERT ON `mydb`.`review`
+FOR EACH ROW
+begin
+	declare avgrating decimal(2,1);
+	select avg(Rating) into avgrating from review;
+    update product set product_rating = avgrating where product_id=NEW.product_id;
+end$$
+
+
+USE `mydb`$$
+DROP TRIGGER IF EXISTS `mydb`.`review_calc_update` $$
+USE `mydb`$$
+CREATE
+DEFINER=`public`@`localhost`
+TRIGGER `mydb`.`review_calc_update`
+AFTER UPDATE ON `mydb`.`review`
+FOR EACH ROW
+begin
+	declare avgrating decimal(2,1);
+	select avg(Rating) into avgrating from review;
+    update product set product_rating = avgrating where product_id=NEW.product_id;
+end$$
+
+
+USE `mydb`$$
+DROP TRIGGER IF EXISTS `mydb`.`review_check` $$
+USE `mydb`$$
+CREATE
+DEFINER=`public`@`localhost`
+TRIGGER `mydb`.`review_check`
+BEFORE INSERT ON `mydb`.`review`
+FOR EACH ROW
+begin
+	declare bought, returned int;
+	select count(*) into bought from buyerorder bo, order_has_product ohp where bo.Buyer_ID=New.Buyer_ID and bo.Order_ID=ohp.Order_ID and ohp.Product_ID=new.Product_ID;
+    select count(*) into returned from buyerorder bo, orderreturns odr where bo.Buyer_ID=New.Buyer_ID and bo.Order_ID=odr.Order_ID and odr.Product_ID=new.Product_ID;
+    if bought <= 0 and returned <= 0 then
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'You have not bought this item. Please buy it first to be able to write a review.';
+    end if;
+end$$
+
+
+DELIMITER ;
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

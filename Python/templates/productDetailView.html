@@ -64,7 +64,7 @@
                             {% if is_loggedin %}
                             <div class="form-row form-group mb-3">
                                 <div class="col">
-                                    <a href="{{url_for('wishlist')}}?action=post&pid={{product.Product_ID}}"
+                                    <a href="{{url_for('wishlist')}}?action=insert&pid={{product.Product_ID}}"
                                         class="btn btn-outline-danger w-100">
                                         <span class="text">Save to Wishlist</span>
                                         <i class="fa fa-heart"></i>
@@ -136,7 +136,7 @@
                 {% endif %}
             </div>
             {% for review in reviews%}
-            <div class="row">
+            <div class="row mb-3">
                 <div class="icontext align-items-start mr-4">
                     <span class="icon icon-md rounded-circle border border-primary">
                         <i class="fa fa-user text-primary"></i>
