@@ -8,13 +8,13 @@
                 <aside class="col-md-6">
                     <article class="gallery-wrap">
                         <div class="img-big-wrap">
-                            <div> <a href="#"><img src="static/images/items/3.jpg"></a></div>
+                            <div> <a href="#"><img src="static/images/items/{{range(1,26)|random}}.jpg"></a></div>
                         </div>
                         <div class="thumbs-wrap">
-                            <a href="#" class="item-thumb"> <img src="static/images/items/1.jpg"></a>
-                            <a href="#" class="item-thumb"> <img src="static/images/items/2.jpg"></a>
-                            <a href="#" class="item-thumb"> <img src="static/images/items/3.jpg"></a>
-                            <a href="#" class="item-thumb"> <img src="static/images/items/4.jpg"></a>
+                            <a href="#" class="item-thumb"> <img src="static/images/items/{{range(1,26)|random}}.jpg"></a>
+                            <a href="#" class="item-thumb"> <img src="static/images/items/{{range(1,26)|random}}.jpg"></a>
+                            <a href="#" class="item-thumb"> <img src="static/images/items/{{range(1,26)|random}}.jpg"></a>
+                            <a href="#" class="item-thumb"> <img src="static/images/items/{{range(1,26)|random}}.jpg"></a>
                         </div>
                     </article>
                 </aside>
@@ -23,7 +23,7 @@
                         <h2 class="title">{{product.Name}}</h2>
                         <div class="rating-wrap my-3">
                             <ul class="rating-stars">
-                                <li style="width:80%" class="stars-active">
+                                <li class="stars-active">
                                     {% for x in range(product.product_rating|int) %}
                                     <i class="fa fa-star"></i>
                                     {% endfor %}
@@ -143,7 +143,7 @@
                     </span>
                     <div class="text">
                         <ul class="rating-stars mb-2">
-                            <li style="width:80%" class="stars-active">
+                            <li class="stars-active">
                                 {% for x in range(review.Rating|int) %}
                                 <i class="fa fa-star"></i>
                                 {% endfor %}

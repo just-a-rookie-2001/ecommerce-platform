@@ -70,7 +70,7 @@ def home():
 
 @app.route("/register.html", methods=['GET', 'POST'])
 def signup():
-    global is_loggedin
+    global is_loggedin, loggedinname
     if (is_loggedin):
         return redirect(url_for('home'))
     if request.method == 'POST':
@@ -92,7 +92,7 @@ def signup():
         except Exception as e:
             print("Could not add entity to User Table")
             client.rollback()
-            return render_template('error.html', e=e)
+            return render_template('error.html', e=e, is_loggedin=is_loggedin, loggedinname=loggedinname)
 
         if (type == "Supplier"):
             name = request.form['Name']
@@ -113,7 +113,7 @@ def signup():
             except Exception as e:
                 print("Could not add entity to Supplier Table", e)
                 client.rollback()
-                return render_template('error.html', e=e)
+                return render_template('error.html', e=e, is_loggedin=is_loggedin, loggedinname=loggedinname)
         else:
             firstName = request.form['firstName']
             lastName = request.form['lastName']
@@ -127,7 +127,7 @@ def signup():
             except Exception as e:
                 print("Could not add entity to Buyer Table", e)
                 client.rollback()
-                return render_template('error.html', e=e)
+                return render_template('error.html', e=e, is_loggedin=is_loggedin, loggedinname=loggedinname)
 
         # close connection
         client.close()
@@ -160,7 +160,7 @@ def login():
             if is_loggedin: return redirect(url_for('supplierhome')) if is_employee else redirect(url_for('home'))
         except Exception as e:
             print("Can not retrieve specified Buyer/Supplier Entity", e)
-            return render_template('error.html', e=e)
+            return render_template('error.html', e=e, is_loggedin=is_loggedin, loggedinname=loggedinname)
         finally:
             client.close()
     return render_template('login.html', title='Log In', styles='signin.css')
@@ -228,7 +228,7 @@ def supplierProductEdit():
         except Exception as e:
             print("Can not insert that specific product", e)
             client.rollback()
-            return render_template('error.html', e=e)
+            return render_template('error.html', e=e, is_loggedin=is_loggedin, loggedinname=loggedinname)
         finally:
             client.close()
         return redirect(url_for('supplierhome'))
@@ -284,7 +284,7 @@ def productDetailView():
         except Exception as e:
             print('Could not submit the review', e)
             client.rollback()
-            return render_template('error.html', e=e)
+            return render_template('error.html', e=e, is_loggedin=is_loggedin, loggedinname=loggedinname)
         finally:
             client.close()
 
@@ -310,7 +310,7 @@ def cart():
         except Exception as e:
             print('Couldnt add item to your cart', e)
             client.rollback()
-            return render_template('error.html', e=e)
+            return render_template('error.html', e=e, is_loggedin=is_loggedin, loggedinname=loggedinname)
         finally:
             client.close()
 
@@ -326,7 +326,7 @@ def cart():
         except Exception as e:
             print('Couldnt remove item to your cart', e)
             client.rollback()
-            return render_template('error.html', e=e)
+            return render_template('error.html', e=e, is_loggedin=is_loggedin, loggedinname=loggedinname)
 
     query = "select * from Product, Shoppingcart where Shoppingcart.Buyer_ID=%s and product.product_id=Shoppingcart.product_id"
     cursor.execute(query, (loggedinid))
@@ -360,7 +360,7 @@ def checkout():
     except Exception as e:
         print("Couldn't complete the transaction", e)
         client.rollback()
-        return render_template('error.html', e=e)
+        return render_template('error.html', e=e, is_loggedin=is_loggedin, loggedinname=loggedinname)
     finally:
         client.close()
     return render_template('checkout.html', address=address, payments=payments, is_loggedin=is_loggedin, loggedinname=loggedinname, styles='home.css', scripts='home.js')
@@ -411,7 +411,7 @@ def profile():
         except Exception as e:
             print('Could not edit the user data', e)
             client.rollback()
-            return render_template('error.html', e=e)
+            return render_template('error.html', e=e, is_loggedin=is_loggedin, loggedinname=loggedinname)
 
         if(not is_employee):
             try:
@@ -424,7 +424,7 @@ def profile():
             except Exception as e:
                 print('Could not edit the buyer data', e)
                 client.rollback()
-                return render_template('error.html', e=e)
+                return render_template('error.html', e=e, is_loggedin=is_loggedin, loggedinname=loggedinname)
             finally:
                 client.close()
         else:
@@ -444,7 +444,7 @@ def profile():
             except Exception as e:
                 print('Could not edit the supplier data', e)
                 client.rollback()
-                return render_template('error.html', e=e)
+                return render_template('error.html', e=e, is_loggedin=is_loggedin, loggedinname=loggedinname)
             finally:
                 client.close()
     return render_template('profile.html', user=user, is_loggedin=is_loggedin, loggedinname=loggedinname, is_employee=is_employee, styles='home.css')
@@ -484,7 +484,7 @@ def settings(redirecturl='settings'):
             except Exception as e:
                 print("Couldn't add the address", e)
                 client.rollback()
-                return render_template('error.html', e=e)
+                return render_template('error.html', e=e, is_loggedin=is_loggedin, loggedinname=loggedinname)
             finally:
                 client.close()
         elif(request.form.get('type') == 'Payment'):
@@ -498,7 +498,7 @@ def settings(redirecturl='settings'):
             except Exception as e:
                 print("Couldn't add the payment method", e)
                 client.rollback()
-                return render_template('error.html', e=e)
+                return render_template('error.html', e=e, is_loggedin=is_loggedin, loggedinname=loggedinname)
             finally:
                 client.close()
         return redirect(url_for(redirecturl))
@@ -523,7 +523,7 @@ def wishlist():
         except Exception as e:
             print("Could not add/delete the item to/from your wishlist", e)
             client.rollback()
-            return render_template('error.html', e=e)
+            return render_template('error.html', e=e, is_loggedin=is_loggedin, loggedinname=loggedinname)
         if (request.args.get('redirecturl') != None):
             return redirect(url_for(request.args.get('redirecturl')))
 
@@ -553,7 +553,7 @@ def orders():
         except Exception as e:
             print('Could not process your return', e)
             client.rollback()
-            return render_template('error.html', e=e)
+            return render_template('error.html', e=e, is_loggedin=is_loggedin, loggedinname=loggedinname)
 
     query = "select distinct order_has_product.order_id from order_has_product, buyerorder \
                 where buyerorder.Buyer_ID=%s and buyerorder.order_id=order_has_product.order_id\

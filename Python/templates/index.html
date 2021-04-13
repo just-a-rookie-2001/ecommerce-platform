@@ -123,7 +123,7 @@
                 <div class="col-md-3">
                     <div class="card card-product-grid">
                         <a href="{{url_for('productDetailView')}}?id={{product.Product_ID}}">
-                            <div class="img-wrap"> <img src="static/images/items/1.jpg"> </div>
+                            <div class="img-wrap"> <img src="static/images/items/{{range(1,26)|random}}.jpg"> </div>
                             <figcaption class="info-wrap">
                                 <div class="title">{{product.Name}}</div>
                                 <div class="price mt-1">${{product.Price}}</div> <!-- price-wrap.// -->

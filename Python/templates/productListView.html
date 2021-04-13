@@ -24,18 +24,17 @@
                     <div class="row no-gutters">
                         <aside class="col-md-3">
                             <div class="img-wrap img-zoom">
-                                <img src="static/images/items/2.jpg">
+                                <img src="static/images/items/{{range(1,26)|random}}.jpg">
                                 <a class='card-img-overlay' data-target="#productModal{{product.Product_ID}}"
                                     data-toggle="modal"></a>
                             </div>
-                            <!-- <a data-toggle="modal"  class="img-wrap"><img src="static/images/items/5.jpg"></a> -->
                         </aside> <!-- col.// -->
                         <div class="col-md-6">
                             <div class="info-main">
                                 <h5 class="h5 title">{{product.Name}}</h5>
                                 <div class="rating-wrap mb-3">
                                     <ul class="rating-stars">
-                                        <li style="width:80%" class="stars-active">
+                                        <li class="stars-active">
                                             {% for x in range(product.product_rating|int) %}
                                             <i class="fa fa-star"></i>
                                             {% endfor %}
@@ -82,7 +81,7 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <a href="#" class="img-wrap"><img src="static/images/items/5.jpg"></a>
+                            <a href="#" class="img-wrap"><img src="static/images/items/{{range(1,26)|random}}.jpg"></a>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

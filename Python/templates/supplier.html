@@ -25,13 +25,13 @@
             <div class="col-md-6 col-lg-3">
                 <figure class="card card-product-grid">
                     <a href="{{url_for('supplierProductEdit')}}?productid={{product.Product_ID}}">
-                        <div class="img-wrap"> <img src="static/images/items/5.jpg"> </div>
+                        <div class="img-wrap"> <img src="static/images/items/{{range(1,26)|random}}.jpg"> </div>
                         <figcaption class="info-wrap border-top">
                             <div class="title">{{product.Name}}</div>
                             <div class="mt-2">
                                 <var class="price">${{product.Price}}</var> <!-- price-wrap.// -->
                                 <ul class="rating-stars float-right">
-                                    <li style="width:80%" class="stars-active">
+                                    <li class="stars-active">
                                         {% for x in range(product.product_rating|int) %}
                                         <i class="fa fa-star"></i>
                                         {% endfor %}
