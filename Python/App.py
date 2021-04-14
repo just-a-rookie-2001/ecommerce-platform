@@ -2,8 +2,8 @@ from functools import wraps
 
 from flask import Flask, render_template, redirect, request
 from flask.helpers import url_for
-import pymysql.cursors
-
+import pymysql
+import dbConnect as cred
 
 # Do hard refresh on web page if something does not loading
 app = Flask(__name__)
@@ -54,13 +54,14 @@ def supplier_not_allowed(f):
 def error():
     return render_template('error.html')
 
+
 @app.route("/index.html")
 @app.route("/")
 @supplier_not_allowed
 def home():
     global is_loggedin, is_employee, loggedinid, loggedinname
     client = pymysql.connect(
-        host="localhost", user="public", password="password123", database="mydb")
+        host=cred.host, user=cred.user, password=cred.password, database=cred.database)
     cursor = client.cursor(pymysql.cursors.DictCursor)
     query = "SELECT * FROM product where units_in_stock>0 LIMIT 8"
     cursor.execute(query)
@@ -76,7 +77,7 @@ def signup():
     if request.method == 'POST':
         # create connection to db
         client = pymysql.connect(
-            host="localhost", user="public", password="password123", database="mydb")
+            host=cred.host, user=cred.user, password=cred.password, database=cred.database)
         cursor = client.cursor()
 
         # obtain data from user form
@@ -87,7 +88,8 @@ def signup():
         type = request.form['type']
         try:
             query = "call create_user(%s, %s, %s, %s, %s)"
-            cursor.execute(query, (email, password,confirm_password,type,phone))
+            cursor.execute(
+                query, (email, password, confirm_password, type, phone))
             client.commit()
         except Exception as e:
             print("Could not add entity to User Table")
@@ -142,7 +144,7 @@ def login():
         return redirect(url_for('home'))
     if request.method == 'POST':
         client = pymysql.connect(
-            host="localhost", user="public", password="password123", database="mydb")
+            host=cred.host, user=cred.user, password=cred.password, database=cred.database)
         cursor = client.cursor()
 
         email = request.form['email']
@@ -150,14 +152,17 @@ def login():
 
         try:
             # Check if customer
-            cursor.callproc('login_user', (email,password,0," ",False,False))
-            cursor.execute('SELECT @_login_user_2, @_login_user_3, @_login_user_4, @_login_user_5')
+            cursor.callproc(
+                'login_user', (email, password, 0, " ", False, False))
+            cursor.execute(
+                'SELECT @_login_user_2, @_login_user_3, @_login_user_4, @_login_user_5')
             res = cursor.fetchall()
             is_loggedin = res[0][3]
             is_employee = res[0][2]
             loggedinname = res[0][1]
             loggedinid = res[0][0]
-            if is_loggedin: return redirect(url_for('supplierhome')) if is_employee else redirect(url_for('home'))
+            if is_loggedin:
+                return redirect(url_for('supplierhome')) if is_employee else redirect(url_for('home'))
         except Exception as e:
             print("Can not retrieve specified Buyer/Supplier Entity", e)
             return render_template('error.html', e=e, is_loggedin=is_loggedin, loggedinname=loggedinname)
@@ -181,7 +186,7 @@ def logout():
 def supplierhome():
     global loggedinid, loggedinname, is_employee, is_loggedin
     client = pymysql.connect(
-        host="localhost", user="public", password="password123", database="mydb")
+        host=cred.host, user=cred.user, password=cred.password, database=cred.database)
     cursor = client.cursor(pymysql.cursors.DictCursor)
     query = "select * from Product where supplier_id=%s"
     cursor.execute(query, (loggedinid))
@@ -199,7 +204,7 @@ def supplierProductEdit():
         productid = request.args.get('productid')
         if productid != None:
             client = pymysql.connect(
-                host="localhost", user="public", password="password123", database="mydb")
+                host=cred.host, user=cred.user, password=cred.password, database=cred.database)
             cursor = client.cursor(pymysql.cursors.DictCursor)
             query = "select * from Product where Product_ID=%s"
             cursor.execute(query, (productid))
@@ -209,7 +214,7 @@ def supplierProductEdit():
 
     elif request.method == 'POST':
         client = pymysql.connect(
-            host="localhost", user="public", password="password123", database="mydb")
+            host=cred.host, user=cred.user, password=cred.password, database=cred.database)
         cursor = client.cursor()
         # print(request.form)
         name = request.form['name']
@@ -217,13 +222,15 @@ def supplierProductEdit():
         description = request.form['description']
         quantity = request.form['quantity']
         price = request.form['price']
-        productid = -1 if request.args.get('productid') == None else request.args.get('productid')
+        productid = - \
+            1 if request.args.get(
+                'productid') == None else request.args.get('productid')
         try:
             query = "call alter_product(%s,%s,%s,%s,%s,%s,%s)"
             print("call alter_product(%s,%s,%s,%s,%s,%s,%s)".format((loggedinid, name, category,
-                            description, quantity, price, productid)))
+                                                                     description, quantity, price, productid)))
             cursor.execute(query, (loggedinid, name, category,
-                            description, quantity, price, productid))
+                                   description, quantity, price, productid))
             client.commit()
         except Exception as e:
             print("Can not insert that specific product", e)
@@ -239,10 +246,11 @@ def supplierProductEdit():
 def productListView(category='All'):
     global is_loggedin, is_employee, loggedinid, loggedinname
     client = pymysql.connect(
-        host="localhost", user="public", password="password123", database="mydb")
+        host=cred.host, user=cred.user, password=cred.password, database=cred.database)
     cursor = client.cursor(pymysql.cursors.DictCursor)
 
-    cat = request.args.get('category') if request.args.get('category')!=None else 'All'
+    cat = request.args.get('category') if request.args.get(
+        'category') != None else 'All'
     query = "call product_list(%s)"
     cursor.execute(query, (cat))
     product_list = cursor.fetchall()
@@ -258,7 +266,7 @@ def productDetailView():
     if request.method == 'GET':
         productID = request.args.get('id')
         client = pymysql.connect(
-            host="localhost", user="public", password="password123", database="mydb")
+            host=cred.host, user=cred.user, password=cred.password, database=cred.database)
         cursor = client.cursor(pymysql.cursors.DictCursor)
         query = "select * from Product where Product_ID=%s and units_in_stock>0"
         cursor.execute(query, productID)
@@ -275,7 +283,7 @@ def productDetailView():
             comment = request.form.get('comment')
             id = request.form.get('id')
             client = pymysql.connect(
-                host="localhost", user="public", password="password123", database="mydb")
+                host=cred.host, user=cred.user, password=cred.password, database=cred.database)
             cursor = client.cursor(pymysql.cursors.DictCursor)
             query = "insert into review(product_id, buyer_id, rating, comment) values (%s,%s,%s,%s)"
             cursor.execute(query, (id, loggedinid, rating, comment))
@@ -301,12 +309,13 @@ def cart():
         qty = request.form['quantity']
         try:
             client = pymysql.connect(
-                host="localhost", user="public", password="password123", database="mydb")
+                host=cred.host, user=cred.user, password=cred.password, database=cred.database)
             cursor = client.cursor(pymysql.cursors.DictCursor)
             query = "call addtocart(%s,%s,%s)"
             cursor.execute(query, (id, loggedinid, qty))
             client.commit()
-            if ('addtocart' in request.form): return redirect(url_for('productDetailView', id=id))
+            if ('addtocart' in request.form):
+                return redirect(url_for('productDetailView', id=id))
         except Exception as e:
             print('Couldnt add item to your cart', e)
             client.rollback()
@@ -315,14 +324,14 @@ def cart():
             client.close()
 
     client = pymysql.connect(
-        host="localhost", user="public", password="password123", database="mydb")
+        host=cred.host, user=cred.user, password=cred.password, database=cred.database)
     cursor = client.cursor(pymysql.cursors.DictCursor)
     if(request.args.get('action') == 'delete'):
         try:
-                id = request.args.get('id')
-                query = "call removefromcart(%s,%s)"
-                cursor.execute(query, (id, loggedinid))
-                client.commit()
+            id = request.args.get('id')
+            query = "call removefromcart(%s,%s)"
+            cursor.execute(query, (id, loggedinid))
+            client.commit()
         except Exception as e:
             print('Couldnt remove item to your cart', e)
             client.rollback()
@@ -340,7 +349,7 @@ def cart():
 def checkout():
     global is_loggedin, is_employee, loggedinid, loggedinname
     client = pymysql.connect(
-        host="localhost", user="public", password="password123", database="mydb")
+        host=cred.host, user=cred.user, password=cred.password, database=cred.database)
     cursor = client.cursor(pymysql.cursors.DictCursor)
     query = "select * from Address where Buyer_ID=%s"
     cursor.execute(query, (loggedinid))
@@ -380,7 +389,7 @@ def profile():
 
     if request.method == 'GET':
         client = pymysql.connect(
-            host="localhost", user="public", password="password123", database="mydb")
+            host=cred.host, user=cred.user, password=cred.password, database=cred.database)
         cursor = client.cursor(pymysql.cursors.DictCursor)
         if(not is_employee):
             query = "select email,date_created,type,phone_number,first_name,last_name,has_membership from user,buyer where ID=%s and user.id=buyer.buyer_id"
@@ -390,17 +399,17 @@ def profile():
             query = "select email, date_created, type, phone_number, Name, Address_Line1, Address_Line2, City, State, Zip, Country from user,supplier where ID=%s and user.id=supplier.supplier_id"
             cursor.execute(query, (loggedinid))
             user = cursor.fetchone()
-        
-        if request.args.get('action') =='delete':
+
+        if request.args.get('action') == 'delete':
             query = 'delete from buyer where buyer_id=%s'
-            cursor.execute(query,(loggedinid))
+            cursor.execute(query, (loggedinid))
             client.commit()
             return redirect(url_for('logout'))
         client.close()
 
     elif request.method == 'POST':
         client = pymysql.connect(
-            host="localhost", user="public", password="password123", database="mydb")
+            host=cred.host, user=cred.user, password=cred.password, database=cred.database)
         cursor = client.cursor(pymysql.cursors.DictCursor)
         try:
             email = request.form.get('email')
@@ -456,7 +465,7 @@ def settings(redirecturl='settings'):
     global is_loggedin, is_employee, loggedinid, loggedinname
 
     client = pymysql.connect(
-        host="localhost", user="public", password="password123", database="mydb")
+        host=cred.host, user=cred.user, password=cred.password, database=cred.database)
     cursor = client.cursor(pymysql.cursors.DictCursor)
     query = "select * from Address where Buyer_ID=%s"
     cursor.execute(query, (loggedinid))
@@ -512,13 +521,14 @@ def wishlist():
     global is_loggedin, is_employee, loggedinid, loggedinname
 
     client = pymysql.connect(
-        host="localhost", user="public", password="password123", database="mydb")
+        host=cred.host, user=cred.user, password=cred.password, database=cred.database)
     cursor = client.cursor(pymysql.cursors.DictCursor)
     if (request.args.get('action') in ['insert', 'delete']):
         try:
             pid = request.args.get('pid')
-            query =  "call alter_wishlist(%s,%s,%s)"
-            cursor.execute(query, (pid, loggedinid,request.args.get('action')))
+            query = "call alter_wishlist(%s,%s,%s)"
+            cursor.execute(
+                query, (pid, loggedinid, request.args.get('action')))
             client.commit()
         except Exception as e:
             print("Could not add/delete the item to/from your wishlist", e)
@@ -540,7 +550,7 @@ def wishlist():
 def orders():
     global is_loggedin, is_employee, loggedinid, loggedinname
     client = pymysql.connect(
-        host="localhost", user="public", password="password123", database="mydb")
+        host=cred.host, user=cred.user, password=cred.password, database=cred.database)
     cursor = client.cursor(pymysql.cursors.DictCursor)
     if (request.args.get('action') == 'post'):
         try:
@@ -582,7 +592,6 @@ def orders():
     return render_template('orders.html', numoforders=numoforders, results=results,
                            numoforreturns=numoforreturns, returns=returns,
                            is_loggedin=is_loggedin, loggedinname=loggedinname, styles='home.css')
-
 
 
 if __name__ == '__main__':
