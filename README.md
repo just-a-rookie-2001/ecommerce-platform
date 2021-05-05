@@ -18,6 +18,7 @@ A simple E-Commerce website to demonstrate relational database functionality
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
 ### Prerequisites
+- [Docker](https://www.docker.com/)
 - [Python](https://www.python.org/downloads/)
 - [MySQL Community](https://dev.mysql.com/downloads/)
 ---
@@ -32,40 +33,33 @@ cd ecommerce-platform
 ```
 ---
 ### Database Configuration
-- Create a mysql database(with name *mydb*) before running the backend
-- Navigate to `./Python/dbConnect.py` and edit the file to match the credentials of your database
+Create a `.env` file in the root directory of the project. Use the below template for starter and replace the details with your system credentials.
 ```
-host = "your host name" 
-# "localhost" is running on a personal computer
+#dont modify 
+MYSQL_HOST=db
+MYSQL_DATABASE=mydb
+MYSQL_ROOT_USER=root
 
-user = "public"
-# database user name
-
-password = "password123"
-# password of the user
-
-database = "mydb"
-# name of the database
-```
-- Replace the details with your system credentials. **NOTE**: Make sure that everything is enclosed in " " or ' ' as shown above
-- If you change the **name of database** here, make sure to change it in the *DB_SCRIPT.sql* file
----
-### Populating Database
-- Open DB_SCRIPT.sql file in MySQL Workbench and run it or use command line to do so
-```
-mysql -u yourusername -p yourpassword yourdatabasename < /pathtothisrepo/Database/DB_SCRIPT.sql
+#please modify
+MYSQL_USER=YourMySQLUserName
+MYSQL_PASSWORD=YourMySQLUserPassword
+MYSQL_ROOT_PASSWORD=YourMySQLRootPassword
 ```
 ---
-### Backend Configuration
-Navigate to the python directory and install packages
-```
-cd ./Python
-pip install -r requirements.txt 
-```
-Finally start the server by executing ```App.py``` file
+### Running Application
+- Make sure docker service is running in the backgroud <br>
+  Verify by executing the command ```docker ps```
+- Finally start build process by executing the command
+
+      docker compose up --build
+- The application will be visible on `localhost:5000`
+- To stop the application run command
+
+      docker compose down
 
 ---
 ## Built With
+- [Docker](https://www.docker.com/)
 - [Flask](https://flask.palletsprojects.com/en/1.1.x/)
 - [PyMySQL](https://pymysql.readthedocs.io/en/latest/)
 ---

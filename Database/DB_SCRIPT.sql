@@ -30,7 +30,6 @@ CREATE TABLE IF NOT EXISTS `mydb`.`user` (
   UNIQUE INDEX `person_id_UNIQUE` (`ID` ASC) VISIBLE,
   UNIQUE INDEX `person_email_UNIQUE` (`Email` ASC) VISIBLE)
 ENGINE = InnoDB
-AUTO_INCREMENT = 34
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -74,7 +73,6 @@ CREATE TABLE IF NOT EXISTS `mydb`.`address` (
     FOREIGN KEY (`Buyer_ID`)
     REFERENCES `mydb`.`buyer` (`Buyer_ID`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 12
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -96,7 +94,6 @@ CREATE TABLE IF NOT EXISTS `mydb`.`payment` (
     FOREIGN KEY (`Buyer_ID`)
     REFERENCES `mydb`.`buyer` (`Buyer_ID`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 10
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -128,7 +125,6 @@ CREATE TABLE IF NOT EXISTS `mydb`.`buyerorder` (
     FOREIGN KEY (`Payment_ID`)
     REFERENCES `mydb`.`payment` (`Payment_ID`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 13
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -176,7 +172,6 @@ CREATE TABLE IF NOT EXISTS `mydb`.`product` (
     FOREIGN KEY (`Supplier_ID`)
     REFERENCES `mydb`.`supplier` (`Supplier_ID`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 6
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -223,7 +218,6 @@ CREATE TABLE IF NOT EXISTS `mydb`.`orderreturns` (
     FOREIGN KEY (`Product_ID`)
     REFERENCES `mydb`.`product` (`Product_ID`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 22
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -249,7 +243,6 @@ CREATE TABLE IF NOT EXISTS `mydb`.`review` (
     FOREIGN KEY (`Product_ID`)
     REFERENCES `mydb`.`product` (`Product_ID`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 8
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -287,7 +280,6 @@ CREATE TABLE IF NOT EXISTS `mydb`.`user_log` (
   `type` VARCHAR(45) NULL DEFAULT NULL,
   PRIMARY KEY (`iduser_log`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 7
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -322,7 +314,7 @@ DROP procedure IF EXISTS `mydb`.`addtocart`;
 
 DELIMITER $$
 USE `mydb`$$
-CREATE DEFINER=`public`@`localhost` PROCEDURE `addtocart`(in pid int, in bid int, in qty int)
+CREATE PROCEDURE `addtocart`(in pid int, in bid int, in qty int)
 begin
 	DECLARE exist, oldqty, stock int;
     select units_in_stock into stock from product where Product_ID=pid;
@@ -351,7 +343,7 @@ DROP procedure IF EXISTS `mydb`.`alter_address`;
 
 DELIMITER $$
 USE `mydb`$$
-CREATE DEFINER=`public`@`localhost` PROCEDURE `alter_address`(in bid int, in al1 varchar(45), in al2 varchar(45), in cty varchar(45), in stt varchar(45), in zp int, in cntry varchar(45))
+CREATE PROCEDURE `alter_address`(in bid int, in al1 varchar(45), in al2 varchar(45), in cty varchar(45), in stt varchar(45), in zp int, in cntry varchar(45))
 begin
 	declare a1,a2,c varchar(50);
     declare z, finished int;
@@ -369,7 +361,7 @@ begin
 			end if;
 	END LOOP getadd;
 	CLOSE adres;
-	INSERT INTO Address(Buyer_ID, Address_Line1, Address_Line2, City, State, Zip, Country) values(bid, al1, al2, cty, stt, zp, cntry);
+	INSERT INTO address(Buyer_ID, Address_Line1, Address_Line2, City, State, Zip, Country) values(bid, al1, al2, cty, stt, zp, cntry);
 end$$
 
 DELIMITER ;
@@ -383,7 +375,7 @@ DROP procedure IF EXISTS `mydb`.`alter_payment`;
 
 DELIMITER $$
 USE `mydb`$$
-CREATE DEFINER=`public`@`localhost` PROCEDURE `alter_payment`(in bid int, in cname varchar(45), in cnum bigint, in cexpdt date)
+CREATE PROCEDURE `alter_payment`(in bid int, in cname varchar(45), in cnum bigint, in cexpdt date)
 begin
 	declare nme varchar(50);
     declare numb, finished bigint;
@@ -418,7 +410,7 @@ DROP procedure IF EXISTS `mydb`.`alter_product`;
 
 DELIMITER $$
 USE `mydb`$$
-CREATE DEFINER=`public`@`localhost` PROCEDURE `alter_product`(in sid int, in nme varchar(50), in cate varchar(50),in des varchar(50), in stock int, in p decimal, in pid int)
+CREATE PROCEDURE `alter_product`(in sid int, in nme varchar(50), in cate varchar(50),in des varchar(50), in stock int, in p decimal, in pid int)
 begin
     if pid = -1 then
 		insert into product(Supplier_ID,name,category,description,units_in_stock,price) values(sid,nme,cate,des,stock,p);
@@ -438,7 +430,7 @@ DROP procedure IF EXISTS `mydb`.`alter_wishlist`;
 
 DELIMITER $$
 USE `mydb`$$
-CREATE DEFINER=`public`@`localhost` PROCEDURE `alter_wishlist`(in pid int, in bid int, in a varchar(7))
+CREATE PROCEDURE `alter_wishlist`(in pid int, in bid int, in a varchar(7))
 begin
     if a = 'insert' then
 		if (select count(*) from wishlist where product_id=pid and buyer_id=bid) > 0 then
@@ -466,7 +458,7 @@ DROP procedure IF EXISTS `mydb`.`checkout`;
 
 DELIMITER $$
 USE `mydb`$$
-CREATE DEFINER=`public`@`localhost` PROCEDURE `checkout`(in bid int, in payid int, in addid int)
+CREATE PROCEDURE `checkout`(in bid int, in payid int, in addid int)
 begin
     DECLARE p_id, qty, x, finished, lastorderid int;
     DECLARE cart CURSOR FOR SELECT Product_ID, Quantity from shoppingcart where Buyer_ID=bid;
@@ -503,25 +495,25 @@ DROP procedure IF EXISTS `mydb`.`create_user`;
 
 DELIMITER $$
 USE `mydb`$$
-CREATE DEFINER=`public`@`localhost` PROCEDURE `create_user`(in email varchar(45), in _password varchar(45), in confirm_password varchar(45), in user_type varchar(10), in phonenum bigint)
+CREATE PROCEDURE `create_user`(in email varchar(45), in _password varchar(45), in confirm_password varchar(45), in user_type varchar(10), in phonenum bigint)
 begin
 	if email NOT LIKE '%_@_%_.__%' then
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Please enter a valid email';
 	end if;
-    if length(_password) <= 7 then
+  if length(_password) <= 7 then
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Your password must be atleast 8 characters in length';
 	end if;
-    if _password != confirm_password then
+  if _password != confirm_password then
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Your passwords do not match';
 	end if;
-    if upper(user_type) not in ('BUYER','SUPPLIER') then
+  if upper(user_type) not in ('BUYER','SUPPLIER') then
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'User must be either a buyer or a supplier';
 	end if;
-    if length(phonenum)<=9 then
+  if length(phonenum)<=9 then
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Phone number must be atleast 10 digits';
 	end if;
     
-    INSERT INTO User(Email, Password, Phone_Number, Type) values(email, _password, phonenum, user_type);
+  INSERT INTO user(Email, Password, Phone_Number, Type) values(email, _password, phonenum, user_type);
 end$$
 
 DELIMITER ;
@@ -535,7 +527,7 @@ DROP procedure IF EXISTS `mydb`.`login_user`;
 
 DELIMITER $$
 USE `mydb`$$
-CREATE DEFINER=`public`@`localhost` PROCEDURE `login_user`(in mail varchar(45), in _password varchar(45), out loggedinid int, out loggedinname varchar(50), out is_employee bool, out is_loggedin bool )
+CREATE PROCEDURE `login_user`(in mail varchar(45), in _password varchar(45), out loggedinid int, out loggedinname varchar(50), out is_employee bool, out is_loggedin bool )
 begin
 	declare exist,uid,buy int;
     declare fname,lname varchar(45);
@@ -569,12 +561,12 @@ DROP procedure IF EXISTS `mydb`.`product_list`;
 
 DELIMITER $$
 USE `mydb`$$
-CREATE DEFINER=`public`@`localhost` PROCEDURE `product_list`(cat varchar(50))
+CREATE PROCEDURE `product_list`(cat varchar(50))
 begin
 	if upper(cat) in (select upper(category) from product) then
-		select * from Product where upper(Category)=upper(cat) and units_in_stock>0;
+		select * from product where upper(Category)=upper(cat) and units_in_stock>0;
 	else
-		select * from Product where units_in_stock>0;
+		select * from product where units_in_stock>0;
     end if;
 end$$
 
@@ -589,7 +581,7 @@ DROP procedure IF EXISTS `mydb`.`removefromcart`;
 
 DELIMITER $$
 USE `mydb`$$
-CREATE DEFINER=`public`@`localhost` PROCEDURE `removefromcart`(in pid int, in bid int)
+CREATE PROCEDURE `removefromcart`(in pid int, in bid int)
 begin
 	declare qty, stock int;
 	select quantity into qty from shoppingcart where Product_ID=pid and Buyer_ID=bid;
@@ -606,9 +598,7 @@ DELIMITER $$
 USE `mydb`$$
 DROP TRIGGER IF EXISTS `mydb`.`delete_buyer` $$
 USE `mydb`$$
-CREATE
-DEFINER=`public`@`localhost`
-TRIGGER `mydb`.`delete_buyer`
+CREATE TRIGGER `mydb`.`delete_buyer`
 BEFORE DELETE ON `mydb`.`buyer`
 FOR EACH ROW
 begin
@@ -625,9 +615,7 @@ end$$
 USE `mydb`$$
 DROP TRIGGER IF EXISTS `mydb`.`delete_user` $$
 USE `mydb`$$
-CREATE
-DEFINER=`public`@`localhost`
-TRIGGER `mydb`.`delete_user`
+CREATE TRIGGER `mydb`.`delete_user`
 AFTER DELETE ON `mydb`.`buyer`
 FOR EACH ROW
 begin
@@ -641,9 +629,7 @@ end$$
 USE `mydb`$$
 DROP TRIGGER IF EXISTS `mydb`.`restock` $$
 USE `mydb`$$
-CREATE
-DEFINER=`public`@`localhost`
-TRIGGER `mydb`.`restock`
+CREATE TRIGGER `mydb`.`restock`
 BEFORE INSERT ON `mydb`.`orderreturns`
 FOR EACH ROW
 begin
@@ -657,9 +643,7 @@ end$$
 USE `mydb`$$
 DROP TRIGGER IF EXISTS `mydb`.`return_check` $$
 USE `mydb`$$
-CREATE
-DEFINER=`public`@`localhost`
-TRIGGER `mydb`.`return_check`
+CREATE TRIGGER `mydb`.`return_check`
 BEFORE INSERT ON `mydb`.`orderreturns`
 FOR EACH ROW
 begin
@@ -674,9 +658,7 @@ end$$
 USE `mydb`$$
 DROP TRIGGER IF EXISTS `mydb`.`review_calc_insert` $$
 USE `mydb`$$
-CREATE
-DEFINER=`public`@`localhost`
-TRIGGER `mydb`.`review_calc_insert`
+CREATE TRIGGER `mydb`.`review_calc_insert`
 AFTER INSERT ON `mydb`.`review`
 FOR EACH ROW
 begin
@@ -689,9 +671,7 @@ end$$
 USE `mydb`$$
 DROP TRIGGER IF EXISTS `mydb`.`review_calc_update` $$
 USE `mydb`$$
-CREATE
-DEFINER=`public`@`localhost`
-TRIGGER `mydb`.`review_calc_update`
+CREATE TRIGGER `mydb`.`review_calc_update`
 AFTER UPDATE ON `mydb`.`review`
 FOR EACH ROW
 begin
@@ -704,9 +684,7 @@ end$$
 USE `mydb`$$
 DROP TRIGGER IF EXISTS `mydb`.`review_check` $$
 USE `mydb`$$
-CREATE
-DEFINER=`public`@`localhost`
-TRIGGER `mydb`.`review_check`
+CREATE TRIGGER `mydb`.`review_check`
 BEFORE INSERT ON `mydb`.`review`
 FOR EACH ROW
 begin
@@ -732,8 +710,6 @@ insert into user values(2,"2@22.22",'22222222',CURRENT_timestamp, 'supplier',222
 insert into supplier(supplier_id, name) values(2,"test");
 insert into user values(3,"3@33.33",'33333333',CURRENT_timestamp, 'supplier',3333333333);
 insert into supplier(supplier_id, name) values(3,"test");
-insert into user values(4,"4@44.44",'44444444',current_timestamp, 'buyer', 4444444444);
-insert into buyer values(4,0,"demo","user");
 
 insert into product values (1,1,'Fashion','T-Shirt','Be comfortable with casuals',25,649.49,3.1);
 insert into product values (2,1,'Fashion','Kurta','Get ready for festives',54,950.25,3.7);
@@ -777,3 +753,10 @@ insert into product values (39,3,'Baby','Wipes','Multipurpose Sanitising',754,55
 insert into product values (40,3,'Baby','Grooming','Oil Powder',500,70,3.7);
 insert into product values (41,3,'Baby','Nursing','Premium Shield',423,329.23,3.7);
 insert into product values (42,3,'Baby','Bottles','Sippy Cup',265,194.14,3.7);
+
+insert into user values(4,"4@44.44",'44444444',current_timestamp, 'buyer', 4444444444);
+insert into buyer values(4,0,"demo","user");
+insert into address values(1,4,"test address","google maps","x","y",123123,"z");
+insert into payment values(1,4,"test card",123412341234,STR_TO_DATE('14/02/2025', '%d/%m/%Y'));
+insert into buyerorder values(1,4,1,1,STR_TO_DATE('14/02/2020', '%d/%m/%Y'),STR_TO_DATE('20/02/2020', '%d/%m/%Y'), 1);
+insert into order_has_product values(1,1,1)
